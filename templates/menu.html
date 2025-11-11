@@ -68,6 +68,32 @@ section.category h2{
 }
 .name-en,.name-ar{ margin:6px 0 4px; font-size:16px; color:var(--mid); font-weight:700; }
 .price{ margin:0; font-weight:800; color:var(--mid); }
+
+/* Origin/Process/Flavors labels */
+.meta-info{
+  margin-top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  text-align:left;
+  font-size:12px;
+  color:var(--dark);
+  padding:0 4px;
+}
+.meta-info span{
+  display:block;
+  background:#eaf3fb;
+  border-radius:6px;
+  padding:4px 6px;
+  font-size:12px;
+  color:var(--mid);
+  font-weight:500;
+}
+.meta-info span strong{
+  color:var(--dark);
+  margin-right:4px;
+}
+
 footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opacity:.85; }
 
 @media (max-width:768px){
@@ -86,7 +112,6 @@ footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opac
   <p class="sub">Specialty Coffee Menu</p>
 </header>
 
-{# ---------- Group items by category ---------- #}
 {% set grouped = {} %}
 {% for it in menu_items %}
   {% set cat = it['category'] or 'Other' %}
@@ -94,7 +119,6 @@ footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opac
   {% set _ = grouped[cat].append(it) %}
 {% endfor %}
 
-{# ---------- Render categories vertically, items horizontally ---------- #}
 {% for category, items in grouped.items() %}
 <section class="category">
   <h2 id="header-{{ category|replace(' ','-') }}">{{ category }}</h2>
@@ -116,6 +140,20 @@ footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opac
         <h3 class="name-en">{{ item['name_en'] }}</h3>
         <h3 class="name-ar" style="display:none;">{{ item['name_ar'] }}</h3>
         <p class="price">{{ item['price'] }} KWD</p>
+
+        {% if item['origin'] or item['process'] or item['flavors'] %}
+        <div class="meta-info">
+          {% if item['origin'] %}
+          <span><strong>Origin:</strong> {{ item['origin'] }}</span>
+          {% endif %}
+          {% if item['process'] %}
+          <span><strong>Process:</strong> {{ item['process'] }}</span>
+          {% endif %}
+          {% if item['flavors'] %}
+          <span><strong>Flavors:</strong> {{ item['flavors'] }}</span>
+          {% endif %}
+        </div>
+        {% endif %}
       </div>
       {% endfor %}
     </div>
@@ -129,7 +167,7 @@ footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opac
 </footer>
 
 <script>
-// 🌐 Toggle language + auto-translate missing names
+// 🌐 Language toggle with dynamic translation
 const btn=document.getElementById('langBtn');
 btn.addEventListener('click',async()=>{
   const isArabic=btn.textContent.trim()==='عربي';
@@ -137,28 +175,24 @@ btn.addEventListener('click',async()=>{
   document.documentElement.dir=isArabic?'rtl':'ltr';
   document.querySelectorAll('.name-en').forEach(e=>e.style.display=isArabic?'none':'block');
   document.querySelectorAll('.name-ar').forEach(e=>e.style.display=isArabic?'block':'none');
-
   const cards=document.querySelectorAll('.card');
   for(const card of cards){
     const en=card.querySelector('.name-en');
     const ar=card.querySelector('.name-ar');
     const enText=en.textContent.trim();
     const arText=ar.textContent.trim();
-    // Auto-translate missing field based on current language toggle
     if(isArabic && !arText && enText){
-      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:enText,lang:'en'})});
+      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:enText,lang:'en'})});
       const d=await res.json(); if(d.translated) ar.textContent=d.translated;
     }
     if(!isArabic && !enText && arText){
-      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:arText,lang:'ar'})});
+      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:arText,lang:'ar'})});
       const d=await res.json(); if(d.translated) en.textContent=d.translated;
     }
   }
 });
 
-// 🧭 Horizontal scrolling + fade header + arrow visibility
+// 🧭 Horizontal scrolling
 function scrollRow(cat,dir){
   const id='row-'+cat.replace(/ /g,'-');
   const el=document.getElementById(id);

@@ -206,56 +206,59 @@ a.edit { color:var(--mid); margin-right:8px; }
 </div>
 
 <script>
-// ✅ Auto-translation while typing
+// 🧠 Auto-translation while typing
 let typingTimeout;
 ['name_en','name_ar'].forEach(id=>{
   const input=document.getElementById(id);
   input.addEventListener('input',()=>{
     clearTimeout(typingTimeout);
-    typingTimeout=setTimeout(()=>autoTranslate(id),500);
+    typingTimeout=setTimeout(()=>autoTranslate(id),600);
   });
 });
 
-// 🌐 Auto translate on typing
+// 🌐 Auto translate (EN↔AR) using target for real Arabic output
 async function autoTranslate(sourceId){
   const en=document.getElementById('name_en');
   const ar=document.getElementById('name_ar');
-  let text='', lang='';
-  if(sourceId==='name_en' && en.value.trim()!==''){ text=en.value.trim(); lang='en'; }
-  else if(sourceId==='name_ar' && ar.value.trim()!==''){ text=ar.value.trim(); lang='ar'; }
+  let text='', target='';
+  if(sourceId==='name_en' && en.value.trim()!==''){ text=en.value.trim(); target='ar'; }
+  else if(sourceId==='name_ar' && ar.value.trim()!==''){ text=ar.value.trim(); target='en'; }
   else return;
 
   const res=await fetch('/translate',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text,lang})
+    body:JSON.stringify({text, target})
   });
   const data=await res.json();
   if(data.translated){
-    if(lang==='en') ar.value=data.translated;
+    if(target==='ar') ar.value=data.translated;
     else en.value=data.translated;
   }
 }
 
-// 🌐 Manual translate buttons
+// 🌐 Manual translation buttons (EN→AR or AR→EN)
 async function manualTranslate(lang){
   const en=document.getElementById('name_en');
   const ar=document.getElementById('name_ar');
-  const text=lang==='ar'?ar.value:en.value;
-  if(!text.trim())return alert("Enter text first!");
+  let text='', target='';
+  if(lang==='en'){ text=en.value.trim(); target='ar'; }
+  else{ text=ar.value.trim(); target='en'; }
+  if(!text) return alert("Enter text first!");
+
   const res=await fetch('/translate',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text,lang})
+    body:JSON.stringify({text, target})
   });
   const data=await res.json();
   if(data.translated){
-    if(lang==='ar') en.value=data.translated;
-    else ar.value=data.translated;
+    if(target==='ar') ar.value=data.translated;
+    else en.value=data.translated;
   }
 }
 
-// ➕ Add and 🗑️ Delete categories (persistent)
+// ➕ Add / 🗑️ Delete categories
 async function addCategory(){
   const select=document.getElementById('categorySelect');
   const newCat=prompt("Enter new category name:");

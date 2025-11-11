@@ -14,38 +14,37 @@ body{
   margin:0; padding:0; background:#fff; color:var(--mid);
   overflow-x:hidden;
 }
-header{ text-align:center; padding:30px 16px 18px; background:#fff; position:sticky; top:0; z-index:20; }
+header{text-align:center;padding:30px 16px 18px;background:#fff;position:sticky;top:0;z-index:20;}
 h1{
-  margin:0 0 6px; font-weight:800; color:var(--mid);
-  user-select:none; letter-spacing:.2px;
+  margin:0 0 6px;font-weight:800;color:var(--mid);
+  user-select:none;letter-spacing:.2px;
 }
-h1 .secret{ color:inherit; cursor:pointer; transition:.25s; border-bottom:1px dashed transparent; }
-h1 .secret:hover{ border-bottom-color:var(--mist); }
-.sub{ margin:0; color:var(--dark); opacity:.8; font-size:14px; }
+h1 .secret{
+  color:inherit;cursor:pointer;transition:.25s;text-decoration:none;
+}
+.sub{margin:0;color:var(--dark);opacity:.8;font-size:14px;}
 
 .lang-toggle{
-  position:fixed; top:14px; right:14px; z-index:30;
-  background:var(--mid); color:#fff; border:none; border-radius:22px;
-  padding:8px 14px; cursor:pointer; font-weight:600; font-size:14px;
+  position:fixed;top:14px;right:14px;z-index:30;
+  background:var(--mid);color:#fff;border:none;border-radius:22px;
+  padding:8px 14px;cursor:pointer;font-weight:600;font-size:14px;
 }
 
-section.category{ position:relative; margin:0 0 26px; }
+section.category{position:relative;margin:0 0 26px;}
 section.category h2{
-  position:sticky; top:64px; background:white; z-index:15;
+  position:sticky;top:64px;background:white;z-index:15;
   border-bottom:2px solid var(--mist);
-  padding:8px 16px; margin:0; color:var(--mid); font-size:18px;
+  padding:8px 16px;margin:0;color:var(--mid);font-size:18px;
   transition:opacity .4s;
 }
-.scroll-wrapper{
-  display:flex; align-items:center; position:relative;
-}
+.scroll-wrapper{display:flex;align-items:center;position:relative;}
 .scroll-btn{
-  position:absolute; top:50%; transform:translateY(-50%);
-  background:var(--mid); color:white; border:none; border-radius:50%;
-  width:36px; height:36px; cursor:pointer; z-index:10;
-  opacity:0; visibility:hidden;
-  display:flex; justify-content:center; align-items:center;
-  transition:opacity .3s, visibility .3s;
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:var(--mid);color:white;border:none;border-radius:50%;
+  width:36px;height:36px;cursor:pointer;z-index:10;
+  opacity:0;visibility:hidden;
+  display:flex;justify-content:center;align-items:center;
+  transition:opacity .3s,visibility .3s;
 }
 .scroll-btn.show{opacity:.9;visibility:visible;}
 .scroll-btn:hover{opacity:1;}
@@ -53,53 +52,39 @@ section.category h2{
 .scroll-btn.right{right:4px;}
 
 .row{
-  display:flex; gap:14px; padding:10px 48px; overflow-x:auto;
-  overscroll-behavior-x:contain; scroll-snap-type:x proximity;
-  scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+  display:flex;gap:14px;padding:10px 48px;overflow-x:auto;
+  overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
 }
 .card{
-  flex:0 0 200px; scroll-snap-align:start;
-  border:1px solid var(--mist); border-radius:12px; background:var(--card);
-  padding:12px; text-align:center; transition:.25s; box-shadow:0 1px 0 rgba(2,16,36,.03);
+  flex:0 0 200px;scroll-snap-align:start;
+  border:1px solid var(--mist);border-radius:12px;background:var(--card);
+  padding:12px;text-align:center;transition:.25s;box-shadow:0 1px 0 rgba(2,16,36,.03);
 }
-.card:hover{ transform:translateY(-3px); }
+.card:hover{transform:translateY(-3px);}
 .card img{
-  width:100%; height:140px; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#eef6ff;
+  width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px;background:#eef6ff;
 }
-.name-en,.name-ar{ margin:6px 0 4px; font-size:16px; color:var(--mid); font-weight:700; }
-.price{ margin:0; font-weight:800; color:var(--mid); }
+.name-en,.name-ar{margin:6px 0 4px;font-size:16px;color:var(--mid);font-weight:700;}
+.price{margin:0;font-weight:800;color:var(--mid);}
 
 /* Origin/Process/Flavors labels */
 .meta-info{
-  margin-top:8px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  text-align:left;
-  font-size:12px;
-  color:var(--dark);
-  padding:0 4px;
+  margin-top:8px;display:flex;flex-direction:column;gap:4px;
+  text-align:left;font-size:12px;color:var(--dark);padding:0 4px;
 }
 .meta-info span{
-  display:block;
-  background:#eaf3fb;
-  border-radius:6px;
-  padding:4px 6px;
-  font-size:12px;
-  color:var(--mid);
-  font-weight:500;
+  display:block;background:#eaf3fb;border-radius:6px;
+  padding:4px 6px;font-size:12px;color:var(--mid);font-weight:500;
 }
-.meta-info span strong{
-  color:var(--dark);
-  margin-right:4px;
-}
+.meta-info span strong{color:var(--dark);margin-right:4px;}
 
-footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opacity:.85; }
+footer{text-align:center;padding:20px;color:var(--dark);font-size:13px;opacity:.85;}
 
-@media (max-width:768px){
+@media(max-width:768px){
   .scroll-btn{display:none;}
   .card{flex-basis:180px;}
-  section.category h2{top:58px; padding:8px 12px;}
+  section.category h2{top:58px;padding:8px 12px;}
   .row{padding:10px 16px;}
 }
 </style>
@@ -143,15 +128,9 @@ footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opac
 
         {% if item['origin'] or item['process'] or item['flavors'] %}
         <div class="meta-info">
-          {% if item['origin'] %}
-          <span><strong>Origin:</strong> {{ item['origin'] }}</span>
-          {% endif %}
-          {% if item['process'] %}
-          <span><strong>Process:</strong> {{ item['process'] }}</span>
-          {% endif %}
-          {% if item['flavors'] %}
-          <span><strong>Flavors:</strong> {{ item['flavors'] }}</span>
-          {% endif %}
+          {% if item['origin'] %}<span><strong>Origin:</strong> {{ item['origin'] }}</span>{% endif %}
+          {% if item['process'] %}<span><strong>Process:</strong> {{ item['process'] }}</span>{% endif %}
+          {% if item['flavors'] %}<span><strong>Flavors:</strong> {{ item['flavors'] }}</span>{% endif %}
         </div>
         {% endif %}
       </div>
@@ -167,27 +146,41 @@ footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opac
 </footer>
 
 <script>
-// 🌐 Language toggle with dynamic translation
+// 🌐 Language toggle with proper Arabic translation
 const btn=document.getElementById('langBtn');
 btn.addEventListener('click',async()=>{
-  const isArabic=btn.textContent.trim()==='عربي';
-  btn.textContent=isArabic?'English':'عربي';
-  document.documentElement.dir=isArabic?'rtl':'ltr';
-  document.querySelectorAll('.name-en').forEach(e=>e.style.display=isArabic?'none':'block');
-  document.querySelectorAll('.name-ar').forEach(e=>e.style.display=isArabic?'block':'none');
+  const toArabic=btn.textContent.trim()==='عربي';
+  btn.textContent=toArabic?'English':'عربي';
+  document.documentElement.dir=toArabic?'rtl':'ltr';
+  document.querySelectorAll('.name-en').forEach(e=>e.style.display=toArabic?'none':'block');
+  document.querySelectorAll('.name-ar').forEach(e=>e.style.display=toArabic?'block':'none');
+
   const cards=document.querySelectorAll('.card');
   for(const card of cards){
     const en=card.querySelector('.name-en');
     const ar=card.querySelector('.name-ar');
     const enText=en.textContent.trim();
     const arText=ar.textContent.trim();
-    if(isArabic && !arText && enText){
-      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:enText,lang:'en'})});
-      const d=await res.json(); if(d.translated) ar.textContent=d.translated;
+
+    // EN → AR (real Arabic)
+    if(toArabic && !arText && enText){
+      const res=await fetch('/translate',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:enText,target:'ar'})
+      });
+      const d=await res.json();
+      if(d.translated) ar.textContent=d.translated;
     }
-    if(!isArabic && !enText && arText){
-      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:arText,lang:'ar'})});
-      const d=await res.json(); if(d.translated) en.textContent=d.translated;
+    // AR → EN
+    if(!toArabic && !enText && arText){
+      const res=await fetch('/translate',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:arText,target:'en'})
+      });
+      const d=await res.json();
+      if(d.translated) en.textContent=d.translated;
     }
   }
 });

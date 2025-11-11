@@ -10,7 +10,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+# -----------------------
 # Translation cache + thread lock
+# -----------------------
 translate_cache = {}
 lock = threading.Lock()
 
@@ -43,8 +45,6 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE
     )''')
-
-    # Default categories
     existing = c.execute("SELECT COUNT(*) FROM categories").fetchone()[0]
     if existing == 0:
         defaults = ['Black','White','Filter','Specials','Pastries','Sweets','Water']
@@ -109,6 +109,7 @@ def menu():
 def admin():
     if not session.get('auth'):
         return redirect(url_for('auth'))
+
     conn = get_db()
     categories = [r['name'] for r in conn.execute("SELECT name FROM categories").fetchall()]
 
@@ -146,6 +147,7 @@ def admin():
 def edit(item_id):
     if not session.get('auth'):
         return redirect(url_for('auth'))
+
     conn = get_db()
     item = conn.execute("SELECT * FROM menu_items WHERE id=?", (item_id,)).fetchone()
     categories = [r['name'] for r in conn.execute("SELECT name FROM categories").fetchall()]
@@ -180,6 +182,7 @@ def edit(item_id):
         conn.commit()
         conn.close()
         return redirect(url_for('admin'))
+
     conn.close()
     return render_template('admin_edit.html', item=item, categories=categories)
 
@@ -194,7 +197,7 @@ def delete(item_id):
     return redirect(url_for('admin'))
 
 # -----------------------
-# Persistent Category Add/Delete (AJAX)
+# Category Add/Delete (AJAX)
 # -----------------------
 @app.route('/categories/add', methods=['POST'])
 def add_category():
@@ -223,17 +226,15 @@ def delete_category():
     return jsonify({"status": "deleted"})
 
 # -----------------------
-# Translation API (Render-safe)
+# Translation API (for JS fetch)
 # -----------------------
 @app.route('/translate', methods=['POST'])
 def translate_text():
     data = request.get_json()
     text = data.get('text', '').strip()
-    lang = data.get('lang', 'en')
+    target = data.get('target', 'ar')  # now we use "target"
     if not text:
         return jsonify({'translated': ''})
-
-    target = 'ar' if lang == 'en' else 'en'
     translated = translate_cached(text, target)
     return jsonify({'translated': translated})
 
@@ -260,7 +261,7 @@ def logout():
     return redirect(url_for('menu'))
 
 # -----------------------
-# Main
+# Run App
 # -----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

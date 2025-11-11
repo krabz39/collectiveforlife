@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edit Item — Collective for Life</title>
+<style>
+:root {
+  --dark:#021024; --mid:#052659; --mist:#7DA0CA; --steam:#C1E8FF;
+}
+body {
+  font-family:'Inter',sans-serif;
+  background:var(--steam);
+  margin:0; padding:20px;
+  color:var(--dark);
+  display:flex; flex-direction:column; align-items:center;
+}
+h1 {
+  color:var(--mid);
+  text-align:center;
+  margin-bottom:20px;
+  font-size:1.8rem;
+}
+form {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+  max-width:700px;
+  width:100%;
+}
+input,select {
+  padding:10px;
+  border:1px solid var(--mid);
+  border-radius:6px;
+  font-size:15px;
+  flex:1 1 45%;
+  min-width:140px;
+  transition:.3s;
+}
+input:focus,select:focus {
+  border-color:var(--dark);
+  outline:none;
+}
+input[type=file] {
+  flex:1 1 100%;
+  background:var(--steam);
+  border:1px dashed var(--mid);
+  padding:12px;
+}
+button {
+  background:var(--mid);
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:10px 15px;
+  cursor:pointer;
+  flex:1 1 100%;
+  min-width:100px;
+  transition:.3s;
+  font-size:15px;
+}
+button:hover { background:var(--dark); }
+
+.translate-btn, .add-cat-btn {
+  background:var(--mist);
+  color:var(--dark);
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  flex:0 0 auto;
+}
+.translate-btn:hover, .add-cat-btn:hover {
+  background:var(--mid); color:white;
+}
+
+.preview {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:20px;
+}
+.preview img {
+  max-width:150px;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+  transition:.3s;
+}
+.preview img:hover { transform:scale(1.05); }
+
+a.back {
+  text-decoration:none;
+  background:var(--dark);
+  color:white;
+  padding:10px 18px;
+  border-radius:8px;
+  margin-top:20px;
+  font-weight:500;
+}
+a.back:hover { background:var(--mid); }
+
+@media(max-width:768px){
+  body{padding:15px;}
+  form{flex-direction:column;align-items:stretch;width:100%;padding:15px;}
+  input,select,button{width:100%;font-size:16px;}
+  .translate-btn,.add-cat-btn{width:100%;margin-top:4px;}
+}
+@media(max-width:480px){
+  h1{font-size:1.4rem;}
+  input,select{font-size:15px;padding:9px;}
+}
+</style>
+</head>
+<body>
+<h1>Edit Menu Item</h1>
+
+<div class="preview">
+  {% if item.image %}
+    <img id="previewImage" src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="Preview">
+  {% else %}
+    <img id="previewImage" src="" alt="Preview" style="display:none;">
+    <p id="noImageText" style="color:#888;">No image uploaded</p>
+  {% endif %}
+</div>
+
+<form method="POST" enctype="multipart/form-data" id="editForm">
+
+  <!-- English + Arabic with translation -->
+  <div style="display:flex;align-items:center;gap:6px;width:100%;flex-wrap:wrap;">
+    <input type="text" id="name_en" name="name_en" value="{{ item.name_en }}" placeholder="Name (English)" required style="flex:1 1 70%;">
+    <button type="button" class="translate-btn" onclick="translate('en')" style="flex:1 1 25%;">🌐→AR</button>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6px;width:100%;flex-wrap:wrap;">
+    <input type="text" id="name_ar" name="name_ar" value="{{ item.name_ar }}" placeholder="Name (Arabic)" required style="flex:1 1 70%;">
+    <button type="button" class="translate-btn" onclick="translate('ar')" style="flex:1 1 25%;">🌐→EN</button>
+  </div>
+
+  <!-- Category selector with add option -->
+  <div style="display:flex;align-items:center;gap:6px;width:100%;flex-wrap:wrap;">
+    <select name="category" id="categorySelect" required style="flex:1 1 70%;">
+      <option {% if item.category == 'Black' %}selected{% endif %}>Black</option>
+      <option {% if item.category == 'White' %}selected{% endif %}>White</option>
+      <option {% if item.category == 'Filter' %}selected{% endif %}>Filter</option>
+      <option {% if item.category == 'Specials' %}selected{% endif %}>Specials</option>
+      <option {% if item.category == 'Pastries' %}selected{% endif %}>Pastries</option>
+      <option {% if item.category == 'Sweets' %}selected{% endif %}>Sweets</option>
+      <option {% if item.category == 'Water' %}selected{% endif %}>Water</option>
+    </select>
+    <button type="button" class="add-cat-btn" onclick="addCategory()" style="flex:1 1 25%;">➕ Add</button>
+  </div>
+
+  <input type="text" name="origin" value="{{ item.origin }}" placeholder="Origin (e.g. Kenya)">
+  <input type="text" name="process" value="{{ item.process }}" placeholder="Process (e.g. Washed)">
+  <input type="text" name="flavors" value="{{ item.flavors }}" placeholder="Flavors (comma-separated)">
+  <input type="text" name="price" value="{{ item.price }}" placeholder="Price (KWD)" required>
+
+  <input type="file" name="image" accept="image/*" id="imageInput" onchange="previewFile(event)">
+
+  <button type="submit">💾 Save Changes</button>
+</form>
+
+<a href="/admin" class="back">← Back to Admin Dashboard</a>
+
+<script>
+// 🌐 Auto translation
+async function translate(lang) {
+  const en = document.getElementById('name_en');
+  const ar = document.getElementById('name_ar');
+  const text = lang === 'ar' ? ar.value : en.value;
+  if (!text.trim()) return alert("Enter text first!");
+  try {
+    const res = await fetch('/translate', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({text, lang})
+    });
+    const data = await res.json();
+    if (data.translated) {
+      if (lang === 'ar') en.value = data.translated;
+      else ar.value = data.translated;
+    } else alert("Translation failed.");
+  } catch {
+    alert("Translation server unavailable.");
+  }
+}
+
+// ➕ Add category dynamically
+function addCategory() {
+  const select = document.getElementById('categorySelect');
+  const newCat = prompt("Enter new category name:");
+  if (newCat && newCat.trim() !== "") {
+    const option = document.createElement('option');
+    option.textContent = newCat.trim();
+    option.value = newCat.trim();
+    select.appendChild(option);
+    select.value = newCat.trim();
+  }
+}
+
+// 🖼️ Live image preview
+function previewFile(event) {
+  const file = event.target.files[0];
+  const preview = document.getElementById('previewImage');
+  const noImageText = document.getElementById('noImageText');
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = "block";
+      if (noImageText) noImageText.style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  }
+}
+</script>
+</body>
+</html>

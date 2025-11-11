@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Collective for Life — Menu</title>
+<style>
+:root{
+  --dark:#021024; --mid:#052659; --mist:#7DA0CA; --steam:#C1E8FF; --card:#f7fbff;
+}
+*{box-sizing:border-box;scroll-behavior:smooth;}
+body{
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  margin:0; padding:0; background:#fff; color:var(--mid);
+  overflow-x:hidden;
+}
+header{ text-align:center; padding:30px 16px 18px; background:#fff; position:sticky; top:0; z-index:20; }
+h1{
+  margin:0 0 6px; font-weight:800; color:var(--mid);
+  user-select:none; letter-spacing:.2px;
+}
+h1 .secret{ color:inherit; cursor:pointer; transition:.25s; border-bottom:1px dashed transparent; }
+h1 .secret:hover{ border-bottom-color:var(--mist); }
+.sub{ margin:0; color:var(--dark); opacity:.8; font-size:14px; }
+
+.lang-toggle{
+  position:fixed; top:14px; right:14px; z-index:30;
+  background:var(--mid); color:#fff; border:none; border-radius:22px;
+  padding:8px 14px; cursor:pointer; font-weight:600; font-size:14px;
+}
+
+section.category{ position:relative; margin:0 0 26px; }
+section.category h2{
+  position:sticky; top:64px; background:white; z-index:15;
+  border-bottom:2px solid var(--mist);
+  padding:8px 16px; margin:0; color:var(--mid); font-size:18px;
+  transition:opacity .4s;
+}
+.scroll-wrapper{
+  display:flex; align-items:center; position:relative;
+}
+.scroll-btn{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:var(--mid); color:white; border:none; border-radius:50%;
+  width:36px; height:36px; cursor:pointer; z-index:10;
+  opacity:0; visibility:hidden;
+  display:flex; justify-content:center; align-items:center;
+  transition:opacity .3s, visibility .3s;
+}
+.scroll-btn.show{opacity:.9;visibility:visible;}
+.scroll-btn:hover{opacity:1;}
+.scroll-btn.left{left:4px;}
+.scroll-btn.right{right:4px;}
+
+.row{
+  display:flex; gap:14px; padding:10px 48px; overflow-x:auto;
+  overscroll-behavior-x:contain; scroll-snap-type:x proximity;
+  scroll-behavior:smooth; -webkit-overflow-scrolling:touch;
+}
+.card{
+  flex:0 0 200px; scroll-snap-align:start;
+  border:1px solid var(--mist); border-radius:12px; background:var(--card);
+  padding:12px; text-align:center; transition:.25s; box-shadow:0 1px 0 rgba(2,16,36,.03);
+}
+.card:hover{ transform:translateY(-3px); }
+.card img{
+  width:100%; height:140px; object-fit:cover; border-radius:8px; margin-bottom:10px; background:#eef6ff;
+}
+.name-en,.name-ar{ margin:6px 0 4px; font-size:16px; color:var(--mid); font-weight:700; }
+.price{ margin:0; font-weight:800; color:var(--mid); }
+footer{ text-align:center; padding:20px; color:var(--dark); font-size:13px; opacity:.85; }
+
+@media (max-width:768px){
+  .scroll-btn{display:none;}
+  .card{flex-basis:180px;}
+  section.category h2{top:58px; padding:8px 12px;}
+  .row{padding:10px 16px;}
+}
+</style>
+</head>
+<body>
+<button class="lang-toggle" id="langBtn">عربي</button>
+
+<header>
+  <h1>Collective for <span class="secret" id="secret">Life</span></h1>
+  <p class="sub">Specialty Coffee Menu</p>
+</header>
+
+{# ---------- Group items by category ---------- #}
+{% set grouped = {} %}
+{% for it in menu_items %}
+  {% set cat = it['category'] or 'Other' %}
+  {% if cat not in grouped %}{% set _ = grouped.update({cat: []}) %}{% endif %}
+  {% set _ = grouped[cat].append(it) %}
+{% endfor %}
+
+{# ---------- Render categories vertically, items horizontally ---------- #}
+{% for category, items in grouped.items() %}
+<section class="category">
+  <h2 id="header-{{ category|replace(' ','-') }}">{{ category }}</h2>
+  <div class="scroll-wrapper">
+    <button class="scroll-btn left" id="left-{{ category|replace(' ','-') }}" onclick="scrollRow('{{ category }}', -1)">&#9664;</button>
+    <div class="row" id="row-{{ category|replace(' ','-') }}">
+      {% for item in items %}
+      <div class="card" data-id="{{ item['id'] }}">
+        {% if item['image'] %}
+          <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}" alt="{{ item['name_en'] or item['name_ar'] }}">
+        {% else %}
+          <img src="data:image/svg+xml;charset=utf-8,
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'>
+            <rect width='400' height='280' fill='%23C1E8FF'/>
+            <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
+            fill='%23052659' font-family='Arial' font-size='22'>Collective for Life</text>
+          </svg>" alt="placeholder">
+        {% endif %}
+        <h3 class="name-en">{{ item['name_en'] }}</h3>
+        <h3 class="name-ar" style="display:none;">{{ item['name_ar'] }}</h3>
+        <p class="price">{{ item['price'] }} KWD</p>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="scroll-btn right" id="right-{{ category|replace(' ','-') }}" onclick="scrollRow('{{ category }}', 1)">&#9654;</button>
+  </div>
+</section>
+{% endfor %}
+
+<footer>
+  <p>Collective for Life — Specialty Coffee • Sharq, Kuwait</p>
+</footer>
+
+<script>
+// 🌐 Toggle language + auto-translate missing names
+const btn=document.getElementById('langBtn');
+btn.addEventListener('click',async()=>{
+  const isArabic=btn.textContent.trim()==='عربي';
+  btn.textContent=isArabic?'English':'عربي';
+  document.documentElement.dir=isArabic?'rtl':'ltr';
+  document.querySelectorAll('.name-en').forEach(e=>e.style.display=isArabic?'none':'block');
+  document.querySelectorAll('.name-ar').forEach(e=>e.style.display=isArabic?'block':'none');
+
+  const cards=document.querySelectorAll('.card');
+  for(const card of cards){
+    const en=card.querySelector('.name-en');
+    const ar=card.querySelector('.name-ar');
+    const enText=en.textContent.trim();
+    const arText=ar.textContent.trim();
+    // Auto-translate missing field based on current language toggle
+    if(isArabic && !arText && enText){
+      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:enText,lang:'en'})});
+      const d=await res.json(); if(d.translated) ar.textContent=d.translated;
+    }
+    if(!isArabic && !enText && arText){
+      const res=await fetch('/translate',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:arText,lang:'ar'})});
+      const d=await res.json(); if(d.translated) en.textContent=d.translated;
+    }
+  }
+});
+
+// 🧭 Horizontal scrolling + fade header + arrow visibility
+function scrollRow(cat,dir){
+  const id='row-'+cat.replace(/ /g,'-');
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.scrollBy({left:dir*260,behavior:'smooth'});
+}
+document.querySelectorAll('.row').forEach(row=>{
+  const cat=row.id.replace('row-','');
+  const left=document.getElementById('left-'+cat);
+  const right=document.getElementById('right-'+cat);
+  const header=document.getElementById('header-'+cat);
+  const check=()=>{
+    const max=row.scrollWidth-row.clientWidth;
+    if(row.scrollLeft>10){left.classList.add('show');}else{left.classList.remove('show');}
+    if(row.scrollLeft<max-10){right.classList.add('show');}else{right.classList.remove('show');}
+    const fade=1-(row.scrollLeft/max)*0.5;
+    header.style.opacity=fade;
+  };
+  row.addEventListener('scroll',check);
+  check();
+});
+
+// 🔐 Secret admin entry
+document.getElementById('secret').addEventListener('click',()=>{window.location.href='/auth';});
+</script>
+</body>
+</html>

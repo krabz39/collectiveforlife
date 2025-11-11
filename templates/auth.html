@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Access — Collective for Life</title>
+<style>
+:root{
+  --dark:#021024; --mid:#052659; --mist:#7DA0CA; --steam:#C1E8FF;
+}
+body{
+  font-family:'Inter',sans-serif;
+  margin:0;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(150deg,var(--mid),var(--steam));
+  color:var(--dark);
+}
+form{
+  background:white;
+  padding:30px 25px;
+  border-radius:14px;
+  box-shadow:0 4px 15px rgba(0,0,0,.15);
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  width:320px;
+  animation:fadein .8s ease forwards;
+}
+@keyframes fadein{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:none;}
+}
+h2{
+  text-align:center;
+  color:var(--mid);
+  margin-bottom:10px;
+}
+input{
+  padding:10px 12px;
+  border:1px solid var(--mist);
+  border-radius:6px;
+  font-size:15px;
+  outline:none;
+}
+input:focus{border-color:var(--mid);}
+button{
+  background:var(--mid);
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:10px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:.3s;
+}
+button:hover{background:var(--dark);}
+p.error{
+  color:#c22;
+  text-align:center;
+  font-size:13px;
+  margin:0;
+}
+a.back{
+  text-align:center;
+  font-size:13px;
+  color:var(--mid);
+  text-decoration:none;
+}
+a.back:hover{text-decoration:underline;}
+@media(max-width:600px){
+  form{width:85%;}
+}
+</style>
+</head>
+<body>
+<form method="POST">
+  <h2>Secure Access</h2>
+  <input type="text" name="username" placeholder="Username or Email" required>
+  <input type="password" name="password" placeholder="Password" required>
+  <button type="submit">Enter</button>
+  {% if error %}
+  <p class="error">{{ error }}</p>
+  {% endif %}
+  <a href="/" class="back">← Back to Menu</a>
+</form>
+</body>
+</html>

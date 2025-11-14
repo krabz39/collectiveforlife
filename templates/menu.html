@@ -4,99 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Collective for Life — Menu</title>
+
 <style>
 :root{
-  --dark:#021024; --mid:#052659; --mist:#7DA0CA; --steam:#C1E8FF; --card:#f7fbff;
+  --dark:#021024;
+  --mid:#052659;
+  --mist:#7DA0CA;
+  --steam:#C1E8FF;
+  --card:#ffffff;
 }
+
 *{box-sizing:border-box;scroll-behavior:smooth;}
+
 body{
   font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  margin:0; padding:0; background:#fff; color:var(--mid);
+  margin:0; padding:0;
+  color:var(--mid);
   overflow-x:hidden;
 }
-header{text-align:center;padding:30px 16px 18px;background:#fff;position:sticky;top:0;z-index:20;}
+
+/* BACKGROUND */
+#bg-wrapper{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  overflow:hidden;z-index:-10;
+}
+#bg-video,#bg-image{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  object-fit:cover;display:none;z-index:-10;
+}
+#bg-fallback{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  background:linear-gradient(to bottom,var(--dark),var(--mid),var(--mist));
+  z-index:-11;
+}
+
+/* GLASS HERO */
+header{
+  width:92%;
+  max-width:600px;
+  margin:20px auto 10px auto;
+  padding:22px 20px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.25);
+  box-shadow:0 8px 25px rgba(0,0,0,0.15);
+  text-align:center;
+  position:sticky;
+  top:10px;
+  z-index:50;
+}
+
 h1{
-  margin:0 0 6px;font-weight:800;color:var(--mid);
-  user-select:none;letter-spacing:.2px;
+  margin:0;
+  font-weight:800;
+  color:white;
+  letter-spacing:.4px;
 }
 h1 .secret{
-  color:inherit;cursor:pointer;transition:.25s;text-decoration:none;
+  color:var(--steam);
+  cursor:pointer;
+  text-decoration:none;
 }
-.sub{margin:0;color:var(--dark);opacity:.8;font-size:14px;}
+.sub{
+  margin-top:6px;
+  color:white;
+  opacity:.85;
+  font-size:15px;
+}
 
 .lang-toggle{
-  position:fixed;top:14px;right:14px;z-index:30;
-  background:var(--mid);color:#fff;border:none;border-radius:22px;
-  padding:8px 14px;cursor:pointer;font-weight:600;font-size:14px;
+  position:fixed;top:14px;right:14px;z-index:60;
+  background:var(--mid);color:#fff;border:none;
+  padding:8px 16px;border-radius:20px;
+  cursor:pointer;font-weight:600;font-size:14px;
 }
 
-section.category{position:relative;margin:0 0 26px;}
-section.category h2{
-  position:sticky;top:64px;background:white;z-index:15;
-  border-bottom:2px solid var(--mist);
-  padding:8px 16px;margin:0;color:var(--mid);font-size:18px;
-  transition:opacity .4s;
+/* SEARCH + FILTER */
+#searchBar{
+  width:92%;max-width:480px;margin:12px auto 4px auto;
+  padding:10px 14px;border-radius:14px;
+  border:1px solid var(--mist);
+  font-size:15px;color:var(--dark);
+  background:#fff;
 }
-.scroll-wrapper{display:flex;align-items:center;position:relative;}
+#filters{
+  display:flex;gap:8px;width:92%;margin:auto;flex-wrap:wrap;margin-bottom:10px;
+}
+.filter-chip{
+  padding:6px 12px;
+  background:#fff;
+  border:1px solid var(--mist);
+  color:var(--mid);
+  border-radius:20px;
+  font-size:13px;
+  cursor:pointer;
+  transition:.25s;
+}
+.filter-chip.active{
+  background:var(--mid);
+  color:white;
+}
+
+/* CATEGORY */
+section.category{margin:0 0 26px;}
+section.category h2{
+  position:sticky;top:120px;
+  padding:8px 16px;margin:0;
+  color:var(--mid);
+  background:#fff;
+  border-bottom:2px solid var(--mist);
+  z-index:20;
+}
+
+/* WRAPPER FIX: card + contents scroll together */
+.scroll-wrapper{
+  position:relative;display:flex;align-items:center;
+  overflow:hidden;
+}
+
 .scroll-btn{
   position:absolute;top:50%;transform:translateY(-50%);
-  background:var(--mid);color:white;border:none;border-radius:50%;
-  width:36px;height:36px;cursor:pointer;z-index:10;
-  opacity:0;visibility:hidden;
-  display:flex;justify-content:center;align-items:center;
-  transition:opacity .3s,visibility .3s;
+  background:var(--mid);border:none;color:white;
+  border-radius:50%;cursor:pointer;
+  width:36px;height:36px;font-size:18px;
+  opacity:0;visibility:hidden;transition:.3s;
 }
 .scroll-btn.show{opacity:.9;visibility:visible;}
-.scroll-btn:hover{opacity:1;}
-.scroll-btn.left{left:4px;}
-.scroll-btn.right{right:4px;}
+.scroll-btn.left{left:6px;}
+.scroll-btn.right{right:6px;}
 
 .row{
-  display:flex;gap:14px;padding:10px 48px;overflow-x:auto;
-  overscroll-behavior-x:contain;scroll-snap-type:x proximity;
-  scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+  display:flex;gap:14px;
+  padding:10px 48px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-behavior:smooth;
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;
 }
+
+/* CARDS */
 .card{
-  flex:0 0 200px;scroll-snap-align:start;
-  border:1px solid var(--mist);border-radius:12px;background:var(--card);
-  padding:12px;text-align:center;transition:.25s;box-shadow:0 1px 0 rgba(2,16,36,.03);
+  flex:0 0 200px;
+  scroll-snap-align:start;
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  background:#fff;
+  border:1px solid var(--mist);
+  box-shadow:0px 2px 6px rgba(0,0,0,0.08);
+  transition:.25s;
 }
 .card:hover{transform:translateY(-3px);}
-.card img{
-  width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px;background:#eef6ff;
-}
-.name-en,.name-ar{margin:6px 0 4px;font-size:16px;color:var(--mid);font-weight:700;}
-.price{margin:0;font-weight:800;color:var(--mid);}
 
-/* Origin/Process/Flavors labels */
+.card img{
+  width:100%;height:140px;object-fit:cover;
+  border-radius:10px;margin-bottom:10px;
+  background:#eef6ff;
+}
+
+.name-en,.name-ar{
+  margin:6px 0 4px;font-size:16px;color:var(--mid);font-weight:700;
+}
+
+.price{
+  margin:0;font-size:15px;font-weight:800;color:var(--mid);
+}
+
 .meta-info{
-  margin-top:8px;display:flex;flex-direction:column;gap:4px;
-  text-align:left;font-size:12px;color:var(--dark);padding:0 4px;
+  margin-top:8px;text-align:left;font-size:12px;color:var(--dark);
 }
 .meta-info span{
-  display:block;background:#eaf3fb;border-radius:6px;
-  padding:4px 6px;font-size:12px;color:var(--mid);font-weight:500;
+  display:block;background:#eef3f7;border-radius:6px;
+  padding:5px 8px;margin:3px 0;color:var(--mid);
 }
-.meta-info span strong{color:var(--dark);margin-right:4px;}
+.meta-info span strong{
+  font-weight:700;margin-right:4px;color:var(--dark);
+}
 
-footer{text-align:center;padding:20px;color:var(--dark);font-size:13px;opacity:.85;}
+/* FOOTER */
+footer{
+  text-align:center;padding:18px;color:white;font-size:13px;margin-top:40px;
+}
 
 @media(max-width:768px){
-  .scroll-btn{display:none;}
   .card{flex-basis:180px;}
-  section.category h2{top:58px;padding:8px 12px;}
-  .row{padding:10px 16px;}
+  .scroll-btn{display:none;}
 }
 </style>
 </head>
+
 <body>
-<button class="lang-toggle" id="langBtn">عربي</button>
+
+<!-- BACKGROUND -->
+<div id="bg-wrapper">
+  <div id="bg-fallback"></div>
+  <video id="bg-video" autoplay muted loop></video>
+  <img id="bg-image">
+</div>
+
+<button class="lang-toggle" id="langBtn">🌐 عربي</button>
 
 <header>
   <h1>Collective for <span class="secret" id="secret">Life</span></h1>
   <p class="sub">Specialty Coffee Menu</p>
 </header>
 
+<!-- GROUP -->
 {% set grouped = {} %}
 {% for it in menu_items %}
   {% set cat = it['category'] or 'Other' %}
@@ -104,39 +220,54 @@ footer{text-align:center;padding:20px;color:var(--dark);font-size:13px;opacity:.
   {% set _ = grouped[cat].append(it) %}
 {% endfor %}
 
-{% for category, items in grouped.items() %}
-<section class="category">
-  <h2 id="header-{{ category|replace(' ','-') }}">{{ category }}</h2>
-  <div class="scroll-wrapper">
-    <button class="scroll-btn left" id="left-{{ category|replace(' ','-') }}" onclick="scrollRow('{{ category }}', -1)">&#9664;</button>
-    <div class="row" id="row-{{ category|replace(' ','-') }}">
-      {% for item in items %}
-      <div class="card" data-id="{{ item['id'] }}">
-        {% if item['image'] %}
-          <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}" alt="{{ item['name_en'] or item['name_ar'] }}">
-        {% else %}
-          <img src="data:image/svg+xml;charset=utf-8,
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'>
-            <rect width='400' height='280' fill='%23C1E8FF'/>
-            <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
-            fill='%23052659' font-family='Arial' font-size='22'>Collective for Life</text>
-          </svg>" alt="placeholder">
-        {% endif %}
-        <h3 class="name-en">{{ item['name_en'] }}</h3>
-        <h3 class="name-ar" style="display:none;">{{ item['name_ar'] }}</h3>
-        <p class="price">{{ item['price'] }} KWD</p>
+<input id="searchBar" placeholder="Search coffee, category, flavor…">
 
-        {% if item['origin'] or item['process'] or item['flavors'] %}
+<div id="filters">
+  {% for category, items in grouped.items() %}
+    <span class="filter-chip" onclick="filterCategory('{{ category }}')">{{ category }}</span>
+  {% endfor %}
+</div>
+
+{% for category, items in grouped.items() %}
+<section class="category" data-category="{{ category }}">
+  <h2>{{ category }}</h2>
+
+  <div class="scroll-wrapper">
+    <button class="scroll-btn left">&#9664;</button>
+
+    <div class="row">
+      {% for item in items %}
+      <div class="card" data-name="{{ item.name_en }} {{ item.name_ar }}">
+
+        {% if item.image %}
+        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}">
+        {% else %}
+        <img src="data:image/svg+xml,
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'>
+          <rect width='400' height='280' fill='%23C1E8FF'/>
+          <text x='50%' y='50%' font-size='26' text-anchor='middle' fill='%23052659'>
+          Collective for Life
+          </text></svg>">
+        {% endif %}
+
+        <h3 class="name-en">{{ item.name_en }}</h3>
+        <h3 class="name-ar" style="display:none;">{{ item.name_ar }}</h3>
+
+        <p class="price">{{ item.price }} KWD</p>
+
+        {% if item.origin or item.process or item.flavors %}
         <div class="meta-info">
-          {% if item['origin'] %}<span><strong>Origin:</strong> {{ item['origin'] }}</span>{% endif %}
-          {% if item['process'] %}<span><strong>Process:</strong> {{ item['process'] }}</span>{% endif %}
-          {% if item['flavors'] %}<span><strong>Flavors:</strong> {{ item['flavors'] }}</span>{% endif %}
+          {% if item.origin %}<span><strong>Origin:</strong> {{ item.origin }}</span>{% endif %}
+          {% if item.process %}<span><strong>Process:</strong> {{ item.process }}</span>{% endif %}
+          {% if item.flavors %}<span><strong>Flavors:</strong> {{ item.flavors }}</span>{% endif %}
         </div>
         {% endif %}
+
       </div>
       {% endfor %}
     </div>
-    <button class="scroll-btn right" id="right-{{ category|replace(' ','-') }}" onclick="scrollRow('{{ category }}', 1)">&#9654;</button>
+
+    <button class="scroll-btn right">&#9654;</button>
   </div>
 </section>
 {% endfor %}
@@ -146,70 +277,98 @@ footer{text-align:center;padding:20px;color:var(--dark);font-size:13px;opacity:.
 </footer>
 
 <script>
-// 🌐 Language toggle with proper Arabic translation
-const btn=document.getElementById('langBtn');
-btn.addEventListener('click',async()=>{
-  const toArabic=btn.textContent.trim()==='عربي';
-  btn.textContent=toArabic?'English':'عربي';
-  document.documentElement.dir=toArabic?'rtl':'ltr';
-  document.querySelectorAll('.name-en').forEach(e=>e.style.display=toArabic?'none':'block');
-  document.querySelectorAll('.name-ar').forEach(e=>e.style.display=toArabic?'block':'none');
+// BACKGROUND
+async function loadBG(){
+  const res=await fetch("/background/settings");
+  const data=await res.json();
 
-  const cards=document.querySelectorAll('.card');
-  for(const card of cards){
-    const en=card.querySelector('.name-en');
-    const ar=card.querySelector('.name-ar');
-    const enText=en.textContent.trim();
-    const arText=ar.textContent.trim();
+  const video=document.getElementById("bg-video");
+  const image=document.getElementById("bg-image");
 
-    // EN → AR (real Arabic)
-    if(toArabic && !arText && enText){
-      const res=await fetch('/translate',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:enText,target:'ar'})
-      });
-      const d=await res.json();
-      if(d.translated) ar.textContent=d.translated;
-    }
-    // AR → EN
-    if(!toArabic && !enText && arText){
-      const res=await fetch('/translate',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({text:arText,target:'en'})
-      });
-      const d=await res.json();
-      if(d.translated) en.textContent=d.translated;
-    }
+  if(data.type==="video"){
+    video.src="/static/uploads/"+data.value;
+    video.style.display="block";
   }
-});
-
-// 🧭 Horizontal scrolling
-function scrollRow(cat,dir){
-  const id='row-'+cat.replace(/ /g,'-');
-  const el=document.getElementById(id);
-  if(!el)return;
-  el.scrollBy({left:dir*260,behavior:'smooth'});
+  else if(data.type==="image"){
+    image.src="/static/uploads/"+data.value;
+    image.style.display="block";
+  }
 }
-document.querySelectorAll('.row').forEach(row=>{
-  const cat=row.id.replace('row-','');
-  const left=document.getElementById('left-'+cat);
-  const right=document.getElementById('right-'+cat);
-  const header=document.getElementById('header-'+cat);
-  const check=()=>{
-    const max=row.scrollWidth-row.clientWidth;
-    if(row.scrollLeft>10){left.classList.add('show');}else{left.classList.remove('show');}
-    if(row.scrollLeft<max-10){right.classList.add('show');}else{right.classList.remove('show');}
-    const fade=1-(row.scrollLeft/max)*0.5;
-    header.style.opacity=fade;
-  };
-  row.addEventListener('scroll',check);
-  check();
+loadBG();
+
+// SEARCH
+document.getElementById("searchBar").addEventListener("input", e=>{
+  const q=e.target.value.toLowerCase();
+  document.querySelectorAll(".card").forEach(c=>{
+    c.style.display = c.dataset.name.toLowerCase().includes(q) ? "block" : "none";
+  });
 });
 
-// 🔐 Secret admin entry
-document.getElementById('secret').addEventListener('click',()=>{window.location.href='/auth';});
+// FILTER
+function filterCategory(cat){
+  document.querySelectorAll(".filter-chip").forEach(x=>x.classList.remove("active"));
+  document.querySelector(`.filter-chip[onclick="filterCategory('${cat}')"]`).classList.add("active");
+
+  document.querySelectorAll("section.category").forEach(sec=>{
+    sec.style.display = sec.dataset.category === cat ? "block" : "none";
+  });
+}
+
+// SCROLL BUTTONS
+document.querySelectorAll(".scroll-wrapper").forEach(wrap=>{
+  const row=wrap.querySelector(".row");
+  const left=wrap.querySelector(".left");
+  const right=wrap.querySelector(".right");
+
+  function check(){
+    const max=row.scrollWidth-row.clientWidth;
+    left.classList.toggle("show", row.scrollLeft>5);
+    right.classList.toggle("show", row.scrollLeft<max-5);
+  }
+  row.addEventListener("scroll",check);
+  check();
+
+  left.onclick = ()=>row.scrollBy({left:-260,behavior:"smooth"});
+  right.onclick = ()=>row.scrollBy({left:260,behavior:"smooth"});
+});
+
+// ARABIC
+document.getElementById("langBtn").addEventListener("click", async ()=>{
+  const btn=document.getElementById("langBtn");
+  const toArabic=btn.textContent.includes("عربي");
+
+  btn.textContent = toArabic ? "🌐 English" : "🌐 عربي";
+  document.documentElement.dir = toArabic ? "rtl" : "ltr";
+
+  const nodes=[];
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  const skip=["name-en","name-ar","price"];
+
+  while(walker.nextNode()){
+    const n=walker.currentNode;
+    if(n.parentNode.classList &&
+       skip.some(s=>n.parentNode.classList.contains(s))) continue;
+
+    const txt=n.nodeValue.trim();
+    if(txt.length>1 && !['SCRIPT','STYLE'].includes(n.parentNode.tagName))
+      nodes.push(n);
+  }
+
+  const texts=nodes.map(n=>n.nodeValue.trim());
+
+  const res=await fetch('/translate_all',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({texts,target:toArabic?"ar":"en"})
+  });
+
+  const data=await res.json();
+  data.translations.forEach((t,i)=>nodes[i].nodeValue=t);
+});
+
+// ADMIN
+document.getElementById("secret").onclick=()=>location.href="/auth";
 </script>
+
 </body>
 </html>

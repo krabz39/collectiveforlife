@@ -8,13 +8,31 @@ app.secret_key = "krabz_secret_key_2025"
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'webm'}
 
 # -----------------------
-# Translation cache + thread lock
+# Translation cache + lock
 # -----------------------
 translate_cache = {}
 lock = threading.Lock()
+
+# -----------------------
+# Background storage file
+# -----------------------
+BACKGROUND_FILE = "background.json"
+if not os.path.exists(BACKGROUND_FILE):
+    with open(BACKGROUND_FILE, "w") as f:
+        f.write('{"type":"default","value":""}')
+
+def get_background():
+    import json
+    with open(BACKGROUND_FILE, "r") as f:
+        return json.load(f)
+
+def set_background(bg_type, value):
+    import json
+    with open(BACKGROUND_FILE, "w") as f:
+        json.dump({"type": bg_type, "value": value}, f)
 
 # -----------------------
 # Helpers
@@ -45,10 +63,12 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE
     )''')
+
     existing = c.execute("SELECT COUNT(*) FROM categories").fetchone()[0]
     if existing == 0:
         defaults = ['Black','White','Filter','Specials','Pastries','Sweets','Water']
         c.executemany("INSERT INTO categories (name) VALUES (?)", [(d,) for d in defaults])
+
     conn.commit()
     conn.close()
 
@@ -64,47 +84,69 @@ ADMIN_USER = {
 }
 
 # -----------------------
-# Translation helper (LibreTranslate + cache)
+# REAL ARABIC TRANSLATION
 # -----------------------
+def translate_arabic(text, target):
+    try:
+        url = "https://api.mymemory.translated.net/get"
+        params = {"q": text, "langpair": f"en|{target}"}
+        r = requests.get(url, params=params, timeout=5)
+        data = r.json()
+        return data.get("responseData", {}).get("translatedText", text)
+    except:
+        return text
+
 def translate_cached(text, target):
-    """Translate text with caching and fallback using LibreTranslate API."""
     key = f"{target}:{text.strip().lower()}"
     with lock:
         if key in translate_cache:
             return translate_cache[key]
-
-    try:
-        res = requests.post(
-            "https://libretranslate.com/translate",
-            json={"q": text, "source": "auto", "target": target},
-            timeout=5
-        )
-        if res.status_code == 200:
-            translated = res.json().get("translatedText", text)
-        else:
-            translated = text
-    except Exception as e:
-        print("Translation API error:", e)
-        translated = text
-
+    translated = translate_arabic(text, target)
     with lock:
         translate_cache[key] = translated
     return translated
 
 # -----------------------
-# Routes
+# ROUTES
 # -----------------------
+
 @app.route('/')
 def landing():
-    return render_template('landing.html')
+    bg = get_background()
+    return render_template('landing.html', bg=bg)
 
 @app.route('/menu')
 def menu():
     conn = get_db()
     items = conn.execute("SELECT * FROM menu_items").fetchall()
     conn.close()
-    return render_template('menu.html', menu_items=items)
+    bg = get_background()
+    return render_template('menu.html', menu_items=items, bg=bg)
 
+# -----------------------
+# BACKGROUND SETTINGS API (FIXES 404)
+# -----------------------
+@app.route('/background/settings')
+def bg_settings():
+    bg = get_background()
+    bg_type = bg["type"]
+    value = bg["value"]
+
+    # Build full static path
+    if bg_type == "video" or bg_type == "image":
+        path = f"/static/uploads/{value}"
+    else:
+        path = ""
+
+    return jsonify({
+        "type": bg_type,
+        "path": path,
+        "value": value
+    })
+
+# -----------------------
+# ADMIN DASHBOARD
+# -----------------------
 @app.route('/admin', methods=['GET','POST'])
 def admin():
     if not session.get('auth'):
@@ -143,6 +185,9 @@ def admin():
     conn.close()
     return render_template('admin.html', menu_items=items, categories=categories)
 
+# -----------------------
+# EDIT ITEM
+# -----------------------
 @app.route('/edit/<int:item_id>', methods=['GET','POST'])
 def edit(item_id):
     if not session.get('auth'):
@@ -159,6 +204,7 @@ def edit(item_id):
     if request.method == 'POST':
         name_en = request.form['name_en'].strip()
         name_ar = request.form['name_ar'].strip()
+
         if not name_ar and name_en:
             name_ar = translate_cached(name_en, 'ar')
         elif not name_en and name_ar:
@@ -197,7 +243,7 @@ def delete(item_id):
     return redirect(url_for('admin'))
 
 # -----------------------
-# Category Add/Delete (AJAX)
+# CATEGORY MANAGEMENT
 # -----------------------
 @app.route('/categories/add', methods=['POST'])
 def add_category():
@@ -226,20 +272,65 @@ def delete_category():
     return jsonify({"status": "deleted"})
 
 # -----------------------
-# Translation API (for JS fetch)
+# TRANSLATION ROUTES
 # -----------------------
 @app.route('/translate', methods=['POST'])
 def translate_text():
     data = request.get_json()
     text = data.get('text', '').strip()
-    target = data.get('target', 'ar')  # now we use "target"
+    target = data.get('target', 'ar')
     if not text:
         return jsonify({'translated': ''})
-    translated = translate_cached(text, target)
-    return jsonify({'translated': translated})
+    return jsonify({'translated': translate_cached(text, target)})
+
+@app.route('/translate_all', methods=['POST'])
+def translate_all():
+    data = request.get_json()
+    texts = data.get('texts', [])
+    target = data.get('target', 'ar')
+    translations = [translate_cached(t, target) for t in texts]
+    return jsonify({'translations': translations})
 
 # -----------------------
-# Auth
+# BACKGROUND EDITOR ROUTES
+# -----------------------
+@app.route('/admin/background', methods=['GET', 'POST'])
+def admin_background():
+    if not session.get('auth'):
+        return redirect('/auth')
+
+    bg = get_background()
+
+    if request.method == 'POST':
+        bg_type = request.form.get("bg_type")
+
+        if bg_type == "color":
+            color = request.form.get("bg_color")
+            set_background("color", color)
+
+        elif bg_type == "image":
+            file = request.files.get("bg_image")
+            if file and allowed_file(file.filename):
+                filename = "bg_" + secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                set_background("image", filename)
+
+        elif bg_type == "video":
+            file = request.files.get("bg_video")
+            if file and allowed_file(file.filename):
+                filename = "bg_" + secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                set_background("video", filename)
+
+        elif bg_type == "default":
+            set_background("default", "")
+
+        return redirect('/admin/background')
+
+    return render_template("admin_background.html", bg=bg)
+
+# -----------------------
+# AUTH
 # -----------------------
 @app.route('/auth', methods=['GET','POST'])
 def auth():
@@ -261,7 +352,7 @@ def logout():
     return redirect(url_for('menu'))
 
 # -----------------------
-# Run App
+# RUN APP
 # -----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

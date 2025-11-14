@@ -5,59 +5,153 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Collective for Life — Welcome</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+
 <style>
 :root {
   --dark:#021024; --mid:#052659; --steel:#548383;
   --mist:#7DA0CA; --steam:#C1E8FF;
 }
-body{
-  margin:0; overflow:hidden;
-  background:linear-gradient(to bottom,var(--dark),var(--mist),var(--steam));
-  font-family:'Inter',sans-serif; color:var(--steam);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  height:100vh; text-align:center;
+
+/* -------------------------------------
+   BACKGROUND SYSTEM (Video / Image / Color)
+-------------------------------------- */
+#bg-wrapper{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  overflow:hidden;
+  z-index:-5;
 }
+
+/* VIDEO */
+#bg-video{
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  display:none;
+  z-index:-5;
+}
+
+/* IMAGE */
+#bg-image{
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  display:none;
+  z-index:-5;
+}
+
+/* COLOR */
+#bg-fallback{
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:linear-gradient(to bottom,var(--dark),var(--mist),var(--steam));
+  z-index:-6;
+}
+
+/* -------------------------------------
+   MAIN PAGE CONTENT
+-------------------------------------- */
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  font-family:'Inter',sans-serif;
+  color:var(--steam);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+/* Title */
 h1{
-  font-size:2.4rem; letter-spacing:2px; margin:0;
+  font-size:2.4rem;
+  letter-spacing:2px;
+  margin:0;
   background:linear-gradient(120deg,var(--steam),var(--mist),var(--steam));
   background-size:200% auto;
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
   animation:shine 6s linear infinite;
-  z-index:2; position:relative;
+  z-index:3;
 }
-@keyframes shine{to{background-position:200% center;}}
-.tagline{margin-top:12px;font-size:1.1rem;opacity:.9;z-index:2;}
-.bean{
-  width:40px;height:40px;margin-top:50px;
-  background:url('/static/images/bean.png') center/contain no-repeat;
-  animation:bounce 2s infinite ease-in-out;cursor:pointer;z-index:3;
-}
-@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-15px);}}
+@keyframes shine { to { background-position:200% center; } }
 
-#steam-container{
-  position:absolute;width:100%;height:100%;top:0;left:0;z-index:1;opacity:.8;
+/* Tagline */
+.tagline{
+  margin-top:12px;
+  font-size:1.1rem;
+  opacity:.9;
+  z-index:3;
 }
+
+/* Bean Icon */
+.bean{
+  width:40px; height:40px;
+  margin-top:50px;
+  background:url('/static/images/bean.png') center/contain no-repeat;
+  animation:bounce 2s infinite ease-in-out;
+  cursor:pointer;
+  z-index:4;
+}
+@keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+
+/* Steam Layer */
+#steam-container{
+  position:absolute;
+  width:100%; height:100%;
+  top:0; left:0;
+  z-index:2;
+  opacity:.8;
+}
+
+/* Smile Animation */
 .smile{
-  position:absolute;bottom:30%;width:120px;left:calc(50% - 60px);
-  opacity:0;z-index:2;
+  position:absolute;
+  bottom:30%;
+  width:120px;
+  left:calc(50% - 60px);
+  opacity:0;
+  z-index:3;
 }
 .smile svg path{
-  stroke:var(--steam);stroke-width:3;fill:none;stroke-dasharray:200;
-  stroke-dashoffset:200;animation:none;
+  stroke:var(--steam);
+  stroke-width:3;
+  fill:none;
+  stroke-dasharray:200;
+  stroke-dashoffset:200;
 }
-@keyframes drawSmile{
-  to{stroke-dashoffset:0;}
+@keyframes drawSmile { to { stroke-dashoffset:0; } }
+
+.fade-out{
+  opacity:0;
+  transition:1.2s;
 }
-.fade-out{opacity:0;transition:1.2s;}
 </style>
 </head>
 <body>
+
+<!-- BACKGROUND LAYERS -->
+<div id="bg-wrapper">
+  <div id="bg-fallback"></div>
+  <video id="bg-video" autoplay muted loop></video>
+  <img id="bg-image" />
+</div>
+
+<!-- STEAM -->
 <div id="steam-container"></div>
+
+<!-- MAIN CONTENT -->
 <h1 id="logo">COLLECTIVE FOR LIFE</h1>
 <div class="tagline">Enjoy coffee, Collectively.<br>استمتع بالقهوة، جماعياً.</div>
 <div class="bean" id="bean"></div>
 
-<!-- Smile path drawn with CSS -->
+<!-- SMILE -->
 <div class="smile" id="smile">
   <svg viewBox="0 0 100 50">
     <path d="M10 25 Q50 50 90 25" />
@@ -66,17 +160,60 @@ h1{
 </div>
 
 <script>
-// --- LOTTIE STEAM ---
-const steamContainer=document.getElementById('steam-container');
+// -------------------------------------
+// LOAD BACKGROUND SETTINGS
+// -------------------------------------
+async function loadBackground(){
+  try {
+    const res = await fetch("/background/settings");
+    const data = await res.json();
+
+    const video = document.getElementById("bg-video");
+    const image = document.getElementById("bg-image");
+    const fallback = document.getElementById("bg-fallback");
+
+    video.style.display = "none";
+    image.style.display = "none";
+
+    if (data.type === "video") {
+      video.src = data.path;
+      video.style.display = "block";
+      fallback.style.display = "none";
+    }
+    else if (data.type === "image") {
+      image.src = data.path;
+      image.style.display = "block";
+      fallback.style.display = "none";
+    }
+    else if (data.type === "color") {
+      fallback.style.background = data.value;
+      fallback.style.display = "block";
+    }
+    else {
+      fallback.style.display = "block";
+    }
+
+  } catch (err) {
+    console.log("Background load error:", err);
+  }
+}
+
+loadBackground();
+
+// -------------------------------------
+// STEAM ANIMATION
+// -------------------------------------
 lottie.loadAnimation({
-  container:steamContainer,
+  container: document.getElementById('steam-container'),
   renderer:'svg',
   loop:true,
   autoplay:true,
   path:'/static/lottie/steam.json'
 });
 
-// --- TAP BEAN TO TRANSITION ---
+// -------------------------------------
+// TAP BEAN TO ENTER MENU
+// -------------------------------------
 const bean=document.getElementById('bean');
 const logo=document.getElementById('logo');
 const tagline=document.querySelector('.tagline');
@@ -87,10 +224,13 @@ bean.addEventListener('click',()=>{
   tagline.classList.add('fade-out');
   bean.classList.add('fade-out');
   smile.style.opacity='1';
+
   const path=smile.querySelector('path');
   path.style.animation='drawSmile 1.5s ease forwards';
-  setTimeout(()=>{window.location.href='/menu';},1800);
+
+  setTimeout(()=>{ window.location.href='/menu'; },1800);
 });
 </script>
+
 </body>
 </html>

@@ -4,37 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin — Collective for Life</title>
+
 <style>
 :root {
-  --dark:#021024; --mid:#052659; --mist:#7DA0CA; --steam:#C1E8FF;
+  --dark:#021024; 
+  --mid:#052659; 
+  --mist:#7DA0CA; 
+  --steam:#C1E8FF;
 }
 body {
   font-family:'Inter',sans-serif;
   background:var(--steam);
-  margin:0; padding:20px; color:var(--dark);
+  margin:0; padding:20px; 
+  color:var(--dark);
 }
-h1 { text-align:center; margin-bottom:25px; }
 
+/* ------------------------------
+   HEADER CENTERED (NO OVERLAP)
+-------------------------------- */
+header {
+  text-align:center;
+  max-width:900px;
+  margin:0 auto 10px auto;
+}
+header h1 {
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+}
+
+/* Button Row BELOW header */
+.header-actions {
+  margin:10px auto 25px auto;
+  max-width:900px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+}
+
+/* Buttons */
+.small-btn {
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  background:var(--mid);
+  color:white;
+  text-decoration:none;
+  transition:.3s;
+}
+.small-btn:hover { background:var(--dark); }
+
+/* Form + Inputs */
 form {
-  display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
-  background:white; padding:15px; border-radius:12px;
+  display:flex; 
+  flex-wrap:wrap; 
+  justify-content:center; 
+  gap:10px;
+  background:white; 
+  padding:15px; 
+  border-radius:12px;
   box-shadow:0 2px 8px rgba(0,0,0,.1);
-  max-width:900px; margin:auto;
+  max-width:900px; 
+  margin:auto;
 }
-.form-row {
-  display:flex; align-items:center; gap:6px; flex:1 1 100%;
-}
+.form-row { display:flex; gap:6px; flex:1 1 100%; }
 input,select {
   padding:10px 12px;
   border:1px solid var(--mid);
   border-radius:6px;
   font-size:15px;
-  flex:1 1 auto;
   width:100%;
-  min-width:120px;
 }
 input[type=file] {
-  flex:1 1 100%;
   background:var(--steam);
   border:1px dashed var(--mid);
 }
@@ -45,32 +88,25 @@ button {
   border-radius:6px;
   padding:10px 15px;
   cursor:pointer;
-  flex:1 1 auto;
-  min-width:100px;
   transition:.3s;
 }
 button:hover { background:var(--dark); }
 
+/* Translate + Category buttons */
 .translate-btn, .add-cat-btn {
   background:var(--mist);
   color:var(--dark);
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:13px;
-  flex:0 0 auto;
 }
 .translate-btn:hover, .add-cat-btn:hover {
   background:var(--mid); color:white;
 }
 
+/* Table */
 .table-container {
   overflow-x:auto;
   margin-top:25px;
   max-width:95%;
-  margin-left:auto;
-  margin-right:auto;
+  margin:auto;
 }
 table {
   width:100%;
@@ -83,24 +119,21 @@ th,td {
   border:1px solid var(--mist);
   padding:10px;
   text-align:center;
-  vertical-align:middle;
 }
-th { background:var(--mid); color:white; font-weight:600; }
+th { background:var(--mid); color:white; }
+
 td img {
   max-width:60px;
-  height:auto;
   border-radius:6px;
   cursor:pointer;
   transition:.3s;
 }
 td img:hover { transform:scale(1.05); }
-a {
-  color:#d11a2a;
-  text-decoration:none;
-  font-weight:bold;
-}
-a.edit { color:var(--mid); margin-right:8px; }
 
+a.edit { color:var(--mid); font-weight:bold; }
+a { color:#d11a2a; text-decoration:none; font-weight:bold; }
+
+/* Modal */
 .modal {
   display:none;
   position:fixed;
@@ -115,74 +148,81 @@ a.edit { color:var(--mid); margin-right:8px; }
   max-width:90%;
   max-height:85%;
   border-radius:12px;
-  box-shadow:0 2px 20px rgba(255,255,255,.3);
 }
+
+/* Mobile */
 @media(max-width:768px){
-  form { flex-direction:column; align-items:stretch; padding:20px; }
-  .form-row { flex-direction:column; align-items:stretch; }
-  input,select,button { width:100%; font-size:16px; }
-  th,td { font-size:13px; padding:8px; }
-  button, .translate-btn, .add-cat-btn { width:100%; margin-top:4px; }
+  .header-actions { flex-direction:column; }
+  .small-btn { width:100%; text-align:center; }
+  form { padding:20px; }
+  table { font-size:13px; }
 }
 </style>
 </head>
 <body>
-<h1>Admin Dashboard — Collective for Life</h1>
 
+<!-- HEADER -->
+<header>
+  <h1>Admin Dashboard — Collective for Life</h1>
+</header>
+
+<!-- BUTTONS BELOW HEADER -->
+<div class="header-actions">
+  <a href="/menu" class="small-btn">← Menu</a>
+  <button class="small-btn" id="adminTranslateBtn">🌐 Arabic</button>
+  <!-- NEW BACKGROUND BUTTON -->
+  <button class="small-btn" onclick="window.location.href='/admin/background'">🎨 Background</button>
+</div>
+
+<!-- FORM -->
 <form method="POST" enctype="multipart/form-data" id="menuForm">
 
   <div class="form-row">
-    <input type="text" name="name_en" id="name_en" placeholder="Name (English)" required>
-    <button type="button" class="translate-btn" onclick="manualTranslate('en')">🌐→AR</button>
+    <input type="text" name="name_en" id="name_en" placeholder="Name (English)">
+    <button type="button" class="translate-btn" onclick="manualTranslate('en')">→ AR</button>
   </div>
 
   <div class="form-row">
-    <input type="text" name="name_ar" id="name_ar" placeholder="Name (Arabic)" required>
-    <button type="button" class="translate-btn" onclick="manualTranslate('ar')">🌐→EN</button>
+    <input type="text" name="name_ar" id="name_ar" placeholder="Name (Arabic)">
+    <button type="button" class="translate-btn" onclick="manualTranslate('ar')">→ EN</button>
   </div>
 
   <div class="form-row">
-    <select name="category" id="categorySelect" required>
+    <select name="category" id="categorySelect">
       <option value="" disabled selected>Category</option>
       {% for cat in categories %}
       <option>{{ cat }}</option>
       {% endfor %}
     </select>
-    <button type="button" class="add-cat-btn" onclick="addCategory()">➕ Add</button>
-    <button type="button" class="add-cat-btn" style="background:#d11a2a;color:white;" onclick="removeCategory()">🗑️ Delete</button>
+    <button type="button" class="add-cat-btn" onclick="addCategory()">Add</button>
+    <button type="button" class="add-cat-btn" style="background:#d11a2a;color:white;" onclick="removeCategory()">Delete</button>
   </div>
 
-  <input type="text" name="origin" placeholder="Origin (e.g. Kenya)">
-  <input type="text" name="process" placeholder="Process (e.g. Washed)">
-  <input type="text" name="flavors" placeholder="Flavors (comma-separated)">
-  <input type="text" name="price" placeholder="Price (KWD)" required>
-  <input type="file" name="image" accept="image/*">
+  <input type="text" name="origin" placeholder="Origin">
+  <input type="text" name="process" placeholder="Process">
+  <input type="text" name="flavors" placeholder="Flavors">
+  <input type="text" name="price" placeholder="Price (KWD)">
+  <input type="file" name="image">
+
   <button type="submit">Add Item</button>
 </form>
 
+<!-- TABLE -->
 <div class="table-container">
 <table>
   <tr>
-    <th>#</th>
-    <th>Image</th>
-    <th>Category</th>
-    <th>English</th>
-    <th>Arabic</th>
-    <th>Origin</th>
-    <th>Process</th>
-    <th>Flavors</th>
-    <th>Price</th>
-    <th>Actions</th>
+    <th>#</th><th>Image</th><th>Category</th><th>EN</th><th>AR</th>
+    <th>Origin</th><th>Process</th><th>Flavors</th><th>Price</th><th>Actions</th>
   </tr>
   {% for item in menu_items %}
   <tr>
     <td>{{ loop.index }}</td>
     <td>
       {% if item['image'] %}
-        <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}" 
-             alt="img" onclick="showModal('{{ url_for('static', filename='uploads/' ~ item['image']) }}')">
+      <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}"
+           onclick="showModal('{{ url_for('static', filename='uploads/' ~ item['image']) }}')">
       {% else %}
-        <span style="color:#999;">No Image</span>
+      <span style="color:#999;">No Image</span>
       {% endif %}
     </td>
     <td>{{ item['category'] }}</td>
@@ -193,112 +233,76 @@ a.edit { color:var(--mid); margin-right:8px; }
     <td>{{ item['flavors'] or '-' }}</td>
     <td>{{ item['price'] }}</td>
     <td>
-      <a class="edit" href="/edit/{{ item['id'] }}">✏️ Edit</a>
-      <a href="/delete/{{ item['id'] }}">🗑️ Delete</a>
+      <a class="edit" href="/edit/{{ item['id'] }}">✏️</a>
+      <a href="/delete/{{ item['id'] }}">🗑️</a>
     </td>
   </tr>
   {% endfor %}
 </table>
 </div>
 
+<!-- IMAGE MODAL -->
 <div id="imageModal" class="modal" onclick="closeModal()">
-  <img id="modalImage" src="" alt="Preview">
+  <img id="modalImage" src="">
 </div>
 
 <script>
-// 🧠 Auto-translation while typing
-let typingTimeout;
-['name_en','name_ar'].forEach(id=>{
-  const input=document.getElementById(id);
-  input.addEventListener('input',()=>{
-    clearTimeout(typingTimeout);
-    typingTimeout=setTimeout(()=>autoTranslate(id),600);
-  });
-});
-
-// 🌐 Auto translate (EN↔AR) using target for real Arabic output
-async function autoTranslate(sourceId){
-  const en=document.getElementById('name_en');
-  const ar=document.getElementById('name_ar');
-  let text='', target='';
-  if(sourceId==='name_en' && en.value.trim()!==''){ text=en.value.trim(); target='ar'; }
-  else if(sourceId==='name_ar' && ar.value.trim()!==''){ text=ar.value.trim(); target='en'; }
-  else return;
-
-  const res=await fetch('/translate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text, target})
+/* FULL PAGE TRANSLATION */
+async function translateAdminPage(target){
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+  const texts=[], nodes=[];
+  while(walker.nextNode()){
+    const node=walker.currentNode;
+    const txt=node.nodeValue.trim();
+    if(txt && !['SCRIPT','STYLE'].includes(node.parentNode.tagName)){
+      texts.push(txt); nodes.push(node);
+    }
+  }
+  const res=await fetch('/translate_all',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({texts,target})
   });
   const data=await res.json();
-  if(data.translated){
-    if(target==='ar') ar.value=data.translated;
-    else en.value=data.translated;
-  }
+  data.translations.forEach((t,i)=>{ if(nodes[i]) nodes[i].nodeValue=t; });
 }
 
-// 🌐 Manual translation buttons (EN→AR or AR→EN)
+/* Toggle Arabic/English */
+document.getElementById("adminTranslateBtn")
+.addEventListener("click", async ()=>{
+  const btn=document.getElementById("adminTranslateBtn");
+  const toArabic = btn.textContent.includes("Arabic");
+  const target = toArabic ? "ar" : "en";
+  btn.textContent = toArabic ? "English" : "Arabic";
+  document.documentElement.dir = toArabic ? "rtl" : "ltr";
+  await translateAdminPage(target);
+});
+
+/* Field Instant Translation */
 async function manualTranslate(lang){
   const en=document.getElementById('name_en');
   const ar=document.getElementById('name_ar');
   let text='', target='';
-  if(lang==='en'){ text=en.value.trim(); target='ar'; }
-  else{ text=ar.value.trim(); target='en'; }
-  if(!text) return alert("Enter text first!");
-
+  if(lang==='en'){ text=en.value; target='ar'; }
+  else{ text=ar.value; target='en'; }
+  if(!text)return;
   const res=await fetch('/translate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text, target})
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({text,target})
   });
-  const data=await res.json();
-  if(data.translated){
-    if(target==='ar') ar.value=data.translated;
-    else en.value=data.translated;
-  }
+  const d=await res.json();
+  if(target==='ar') ar.value=d.translated;
+  else en.value=d.translated;
 }
 
-// ➕ Add / 🗑️ Delete categories
-async function addCategory(){
-  const select=document.getElementById('categorySelect');
-  const newCat=prompt("Enter new category name:");
-  if(!newCat)return;
-  const res=await fetch('/categories/add',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({name:newCat})
-  });
-  const data=await res.json();
-  if(data.status==="added"){
-    const opt=document.createElement('option');
-    opt.textContent=newCat;opt.value=newCat;
-    select.appendChild(opt);select.value=newCat;
-    alert(`Category "${newCat}" added.`);
-  }else alert("Error adding category.");
-}
-async function removeCategory(){
-  const select=document.getElementById('categorySelect');
-  const selected=select.value;
-  if(!selected)return alert("Select category to delete.");
-  if(!confirm(`Delete category "${selected}"?`))return;
-  const res=await fetch('/categories/delete',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({name:selected})
-  });
-  const data=await res.json();
-  if(data.status==="deleted"){
-    select.querySelector(`option[value="${selected}"]`).remove();
-    select.selectedIndex=0;
-    alert(`"${selected}" deleted.`);
-  }else alert("Error deleting category.");
-}
-
-// 🖼️ Image modal
+/* Image Modal */
 function showModal(src){
-  const m=document.getElementById('imageModal');
-  const img=document.getElementById('modalImage');
-  img.src=src; m.style.display="flex";
+  document.getElementById("modalImage").src=src;
+  document.getElementById("imageModal").style.display="flex";
 }
-function closeModal(){document.getElementById('imageModal').style.display="none";}
+function closeModal(){
+  document.getElementById("imageModal").style.display="none";
+}
 </script>
+
 </body>
 </html>

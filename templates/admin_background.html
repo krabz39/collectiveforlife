@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Background Settings — Collective for Life</title>
+
+<style>
+:root {
+  --dark:#021024;
+  --mid:#052659;
+  --mist:#7DA0CA;
+  --steam:#C1E8FF;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--steam);
+  margin:0; padding:20px;
+  color:var(--dark);
+}
+
+/* Header */
+header{
+  text-align:center;
+  max-width:900px;
+  margin:0 auto 10px auto;
+}
+header h1{
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+}
+
+/* Buttons Row */
+.header-actions{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  max-width:900px;
+  margin:10px auto 25px auto;
+}
+.small-btn{
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  background:var(--mid);
+  color:white;
+  text-decoration:none;
+  transition:.3s;
+}
+.small-btn:hover{
+  background:var(--dark);
+}
+
+/* Form Box */
+form{
+  max-width:900px;
+  margin:auto;
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+/* Field Groups */
+section{
+  margin-bottom:25px;
+}
+h3{
+  margin-bottom:10px;
+}
+
+/* Inputs */
+input[type="color"]{
+  width:100%;
+  height:45px;
+  border-radius:8px;
+  border:1px solid var(--mid);
+  cursor:pointer;
+}
+
+input[type="file"]{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px dashed var(--mid);
+  background:#f1f7ff;
+  cursor:pointer;
+}
+
+/* Save Button */
+.save-btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  background:var(--mid);
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+.save-btn:hover{
+  background:var(--dark);
+}
+
+/* Preview Box */
+.preview-box{
+  width:100%;
+  margin-top:20px;
+  padding:20px;
+  text-align:center;
+  background:white;
+  border-radius:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+.preview-box img{
+  max-width:100%;
+  border-radius:10px;
+}
+.preview-box video{
+  max-width:100%;
+  border-radius:10px;
+}
+
+/* Mobile */
+@media(max-width:768px){
+  .header-actions{
+    flex-direction:column;
+  }
+  .small-btn{
+    width:100%;
+    text-align:center;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Background Settings — Collective for Life</h1>
+</header>
+
+<div class="header-actions">
+  <a href="/admin" class="small-btn">← Back to Admin</a>
+  <button class="small-btn" id="translateBtn">🌐 Arabic</button>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+
+  <!-- Background Color -->
+  <section>
+    <h3>Background Color</h3>
+    <input type="radio" name="bg_type" value="color" required> Use a solid color
+    <br><br>
+    <input type="color" name="bg_color" value="#052659">
+  </section>
+
+  <!-- Background Image -->
+  <section>
+    <h3>Background Image</h3>
+    <input type="radio" name="bg_type" value="image"> Upload Image (jpg/png)
+    <br><br>
+    <input type="file" name="bg_image" accept="image/*">
+  </section>
+
+  <!-- Background Video -->
+  <section>
+    <h3>Background Video</h3>
+    <input type="radio" name="bg_type" value="video"> Upload Video (mp4/webm)
+    <br><br>
+    <input type="file" name="bg_video" accept="video/*">
+  </section>
+
+  <!-- Reset -->
+  <section>
+    <h3>Reset to Default</h3>
+    <input type="radio" name="bg_type" value="default"> Restore default animation
+  </section>
+
+  <button class="save-btn" type="submit">Save Background</button>
+
+</form>
+
+<!-- CURRENT PREVIEW DISPLAY -->
+<div class="preview-box">
+  <h3>Current Background Preview</h3>
+
+  {% if bg.type == "color" %}
+    <div style="width:100%;height:120px;border-radius:10px;background:{{ bg.value }};"></div>
+
+  {% elif bg.type == "image" %}
+    <img src="{{ url_for('static', filename='uploads/' ~ bg.value) }}">
+
+  {% elif bg.type == "video" %}
+    <video autoplay muted loop>
+      <source src="{{ url_for('static', filename='uploads/' ~ bg.value) }}">
+    </video>
+
+  {% else %}
+    <p>Default animated background active.</p>
+  {% endif %}
+</div>
+
+</body>
+</html>

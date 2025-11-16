@@ -8,7 +8,12 @@ app.secret_key = "krabz_secret_key_2025"
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'webm'}
+
+# UPDATED: now supports MOV / M4V / MKV / AVI / OGG etc.
+ALLOWED_EXTENSIONS = {
+    'png','jpg','jpeg','gif',
+    'mp4','webm','mov','m4v','ogg','avi','mkv'
+}
 
 # -----------------------
 # Translation cache + lock
@@ -109,7 +114,6 @@ def translate_cached(text, target):
 # -----------------------
 # ROUTES
 # -----------------------
-
 @app.route('/')
 def landing():
     bg = get_background()
@@ -124,7 +128,7 @@ def menu():
     return render_template('menu.html', menu_items=items, bg=bg)
 
 # -----------------------
-# BACKGROUND SETTINGS API (FIXES 404)
+# BACKGROUND SETTINGS FIXED
 # -----------------------
 @app.route('/background/settings')
 def bg_settings():
@@ -132,16 +136,16 @@ def bg_settings():
     bg_type = bg["type"]
     value = bg["value"]
 
-    # Build full static path
-    if bg_type == "video" or bg_type == "image":
+    # Always return correct static path
+    if bg_type in ["video", "image"] and value:
         path = f"/static/uploads/{value}"
     else:
         path = ""
 
     return jsonify({
         "type": bg_type,
-        "path": path,
-        "value": value
+        "value": value,
+        "path": path
     })
 
 # -----------------------
@@ -186,7 +190,7 @@ def admin():
     return render_template('admin.html', menu_items=items, categories=categories)
 
 # -----------------------
-# EDIT ITEM
+# EDIT
 # -----------------------
 @app.route('/edit/<int:item_id>', methods=['GET','POST'])
 def edit(item_id):
@@ -243,7 +247,7 @@ def delete(item_id):
     return redirect(url_for('admin'))
 
 # -----------------------
-# CATEGORY MANAGEMENT
+# CATEGORY MGMT
 # -----------------------
 @app.route('/categories/add', methods=['POST'])
 def add_category():
@@ -292,7 +296,7 @@ def translate_all():
     return jsonify({'translations': translations})
 
 # -----------------------
-# BACKGROUND EDITOR ROUTES
+# BACKGROUND EDITOR
 # -----------------------
 @app.route('/admin/background', methods=['GET', 'POST'])
 def admin_background():
@@ -352,7 +356,7 @@ def logout():
     return redirect(url_for('menu'))
 
 # -----------------------
-# RUN APP
+# RUN
 # -----------------------
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

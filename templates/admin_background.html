@@ -161,9 +161,9 @@ input[type="file"]{
   <!-- Background Image -->
   <section>
     <h3>Background Image</h3>
-    <input type="radio" name="bg_type" value="image"> Upload Image (jpg/png/heic/avif)
+    <input type="radio" name="bg_type" value="image"> Upload Image (jpg/png/heic/heif/avif)
     <br><br>
-    <input type="file" name="bg_image" accept="image/*,.heic,.avif">
+    <input type="file" name="bg_image" accept="image/*,.heic,.heif,.avif">
   </section>
 
   <!-- Background Video -->
@@ -172,10 +172,23 @@ input[type="file"]{
     <input type="radio" name="bg_type" value="video"> Upload Video
     <br><br>
 
-    <!-- UPDATED: accept ALL supported formats -->
-    <input type="file" name="bg_video" 
-      accept="video/mp4,video/webm,video/ogg,video/mov,video/m4v,video/x-m4v,
-              video/avi,video/x-msvideo,video/mkv,video/x-matroska">
+    <!-- Accept all major video formats including iPhone HEVC -->
+    <input type="file" name="bg_video"
+      accept="
+        video/mp4,
+        video/x-m4v,
+        video/m4v,
+        video/quicktime,
+        video/mov,
+        video/webm,
+        video/ogg,
+        video/avi,
+        video/x-msvideo,
+        video/mkv,
+        video/x-matroska,
+        video/hevc,
+        video/h265
+      ">
   </section>
 
   <!-- Reset -->

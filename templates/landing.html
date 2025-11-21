@@ -31,6 +31,7 @@
   object-fit:cover;
   display:none;
   z-index:-5;
+  pointer-events:none; /* Prevent iPhone play overlay */
 }
 
 /* IMAGE */
@@ -139,7 +140,7 @@ h1{
 <!-- BACKGROUND LAYERS -->
 <div id="bg-wrapper">
   <div id="bg-fallback"></div>
-  <video id="bg-video" autoplay muted loop></video>
+  <video id="bg-video" autoplay muted loop playsinline></video>
   <img id="bg-image" />
 </div>
 
@@ -175,13 +176,20 @@ async function loadBackground(){
     video.style.display = "none";
     image.style.display = "none";
 
-    if (data.type === "video") {
-      video.src = data.path;
+    // FORCE AUTOPLAY FIX (for iPhone / Safari)
+    video.setAttribute("autoplay", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.muted = true;
+
+    if (data.media_type === "video") {
+      video.src = data.path + "?v=" + Date.now(); 
       video.style.display = "block";
       fallback.style.display = "none";
+      video.play().catch(()=>{});
     }
-    else if (data.type === "image") {
-      image.src = data.path;
+    else if (data.media_type === "image") {
+      image.src = data.path + "?v=" + Date.now();
       image.style.display = "block";
       fallback.style.display = "none";
     }
@@ -201,7 +209,7 @@ async function loadBackground(){
 loadBackground();
 
 // -------------------------------------
-// STEAM ANIMATION
+// STEAM
 // -------------------------------------
 lottie.loadAnimation({
   container: document.getElementById('steam-container'),

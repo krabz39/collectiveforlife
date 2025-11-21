@@ -19,17 +19,21 @@ ALLOWED_EXTENSIONS = {
     'heic','heif','avif'
 }
 
+VIDEO_EXTENSIONS = {
+    'mp4','webm','mov','m4v','ogg','avi','mkv'
+}
+
+def is_video(ext):
+    return ext.lower() in VIDEO_EXTENSIONS
+
 def allowed_file(filename):
     """Accept all modern image/video formats safely."""
     if not filename or "." not in filename:
         return False
 
-    # Strip spaces (Safari/iPhone sometimes adds spaces)
     filename = filename.strip().replace(" ", "")
-
     ext = filename.rsplit(".", 1)[1].lower()
 
-    # iPhone HEIC/HEIF/AVIF auto-accept
     if ext in {'heic', 'heif', 'avif'}:
         return True
 
@@ -90,7 +94,6 @@ def init_db():
         name TEXT UNIQUE
     )''')
 
-    # Default categories
     existing = c.execute("SELECT COUNT(*) FROM categories").fetchone()[0]
     if existing == 0:
         defaults = ['Black', 'White', 'Filter', 'Specials', 'Pastries', 'Sweets', 'Water']
@@ -163,14 +166,18 @@ def bg_settings():
     bg = get_background()
 
     if bg["type"] in ["video", "image"] and bg["value"]:
+        file_ext = bg["value"].split(".")[-1].lower()
+        media_type = "video" if is_video(file_ext) else "image"
         path = f"/static/uploads/{bg['value']}"
     else:
+        media_type = "default"
         path = ""
 
     return jsonify({
         "type": bg["type"],
         "value": bg["value"],
-        "path": path
+        "path": path,
+        "media_type": media_type
     })
 
 
@@ -189,7 +196,6 @@ def admin():
         name_en = request.form["name_en"].strip()
         name_ar = request.form["name_ar"].strip()
 
-        # Auto translate
         if not name_ar and name_en:
             name_ar = translate_cached(name_en, "ar")
         elif not name_en and name_ar:

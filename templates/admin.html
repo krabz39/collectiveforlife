@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin — Collective for Life</title>
 
+
 <style>
 :root {
   --dark:#021024;
@@ -41,6 +42,7 @@ header h1 {
   flex-wrap:wrap;
   gap:10px;
 }
+
 .small-btn {
   padding:10px 16px;
   font-size:14px;
@@ -68,7 +70,11 @@ form {
   margin:auto;
 }
 
-.form-row { display:flex; gap:8px; flex:1 1 100%; }
+.form-row { 
+  display:flex; 
+  gap:8px; 
+  flex:1 1 100%; 
+}
 
 input,select,textarea {
   padding:14px 16px;
@@ -124,7 +130,13 @@ button:hover { background:var(--dark); }
   font-weight:600;
 }
 
-.table-container { overflow-x:auto; margin-top:30px; max-width:95%; margin:auto; }
+/* TABLE */
+.table-container { 
+  overflow-x:auto; 
+  margin-top:30px; 
+  max-width:95%; 
+  margin:auto; 
+}
 
 table {
   width:100%;
@@ -171,6 +183,82 @@ td img:hover { transform:scale(1.06); }
   max-height:85%;
   border-radius:16px;
 }
+
+/* --------------------------------------------------
+   📱 MOBILE RESPONSIVE UPGRADES (STRICTLY ADDED)
+   -------------------------------------------------- */
+@media(max-width:720px){
+
+  body { padding:10px; }
+
+  header h1 {
+    font-size:20px;
+    padding:0 10px;
+  }
+
+  .header-actions {
+    flex-direction:column;
+    width:100%;
+    padding:0 10px;
+  }
+
+  .small-btn {
+    width:100%;
+    text-align:center;
+    padding:14px;
+    font-size:15px;
+  }
+
+  form {
+    padding:14px;
+    gap:12px;
+  }
+
+  .form-row {
+    flex-direction:column;
+    width:100%;
+  }
+
+  input, select, textarea {
+    font-size:15px;
+    padding:12px 14px;
+  }
+
+  button {
+    width:100%;
+    padding:14px;
+    margin-top:4px;
+  }
+
+  .add-cat-btn, .translate-btn {
+    width:100%;
+    margin-top:4px;
+  }
+
+  textarea {
+    min-height:110px;
+  }
+
+  .option-toggle-box {
+    padding:12px;
+  }
+
+  /* TABLE MOBILE */
+  table {
+    font-size:12px;
+    min-width:800px; /* forces horizontal scroll without breaking layout */
+  }
+
+  td img {
+    max-width:50px;
+  }
+
+  .table-container {
+    overflow-x:auto;
+    padding-bottom:10px;
+  }
+}
+
 </style>
 </head>
 <body>

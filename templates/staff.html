@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Staff Dashboard — Collective for Life</title>
+
+<style>
+:root{
+  --dark:#021024;
+  --mid:#052659;
+  --mist:#7DA0CA;
+  --steam:#C1E8FF;
+  --card:#ffffff;
+  --ready:#27ae60;
+  --prep:#f39c12;
+  --pending:#7f8c8d;
+  --cancel:#c0392b;
+}
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  padding:0;
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(to bottom,var(--steam),#ffffff);
+  color:var(--mid);
+}
+
+/* HEADER */
+header{
+  padding:16px 12px;
+  background:var(--mid);
+  color:#fff;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:20;
+  box-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:800;
+}
+header .sub{
+  margin:4px 0 0 0;
+  font-size:13px;
+  opacity:.85;
+}
+
+/* LAYOUT */
+.main{
+  max-width:1000px;
+  margin:14px auto 30px auto;
+  padding:0 10px;
+}
+.top-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.badge{
+  flex:1 1 120px;
+  background:var(--card);
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(2,16,36,0.08);
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+  font-size:13px;
+}
+.badge strong{
+  display:block;
+  font-size:15px;
+  margin-bottom:4px;
+}
+
+/* ORDER COLUMNS */
+.columns{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  margin-top:10px;
+}
+.col{
+  flex:1 1 320px;
+  background:rgba(255,255,255,.92);
+  border-radius:16px;
+  padding:10px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  border:1px solid rgba(7,37,79,.08);
+}
+.col h2{
+  margin:4px 0 8px 0;
+  font-size:16px;
+  font-weight:800;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.col h2 span{
+  font-size:11px;
+  font-weight:500;
+  opacity:.75;
+}
+
+/* ORDER CARD */
+.order{
+  margin-bottom:10px;
+  padding:10px;
+  border-radius:12px;
+  background:#f5f7ff;
+  border:1px solid rgba(5,38,89,.08);
+  font-size:13px;
+}
+.order-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:4px;
+}
+.order-id{
+  font-weight:800;
+  color:var(--mid);
+}
+.order-time{
+  font-size:11px;
+  opacity:.75;
+}
+.order-items{
+  margin:4px 0;
+  padding-left:14px;
+}
+.order-items li{
+  margin:2px 0;
+}
+.order-notes{
+  margin-top:4px;
+  font-size:12px;
+  background:#fff;
+  border-radius:8px;
+  padding:6px 8px;
+  border:1px dashed rgba(5,38,89,.25);
+}
+.order-total{
+  margin-top:4px;
+  font-weight:700;
+}
+
+/* STATUS TAG */
+.status-tag{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:600;
+}
+.status-pending{
+  background:rgba(127,140,141,.15);
+  color:#2c3e50;
+}
+.status-preparing{
+  background:rgba(243,156,18,.15);
+  color:#c67b00;
+}
+.status-ready{
+  background:rgba(39,174,96,.15);
+  color:#1e8449;
+}
+.status-completed{
+  background:rgba(52,152,219,.15);
+  color:#21618c;
+}
+.status-cancelled{
+  background:rgba(192,57,43,.15);
+  color:#7b241c;
+}
+
+/* ACTION BUTTONS */
+.action-row{
+  margin-top:8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.action-btn{
+  flex:1 1 80px;
+  border:none;
+  border-radius:999px;
+  padding:6px 8px;
+  font-size:11px;
+  cursor:pointer;
+  font-weight:600;
+}
+.btn-prep{ background:var(--prep); color:#fff; }
+.btn-ready{ background:var(--ready); color:#fff; }
+.btn-done{ background:var(--mid); color:#fff; }
+.btn-cancel{ background:var(--cancel); color:#fff; }
+
+/* FOOTER */
+footer{
+  text-align:center;
+  font-size:11px;
+  opacity:.7;
+  margin-top:14px;
+}
+
+/* MOBILE */
+@media(max-width:720px){
+  .columns{flex-direction:column;}
+  .badge{font-size:12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Staff Dashboard — Collective for Life</h1>
+  <p class="sub">Live orders • Status control • For baristas & floor staff</p>
+</header>
+
+<div class="main">
+  <div class="top-row">
+    <div class="badge">
+      <strong>Active Orders</strong>
+      <span id="badgeActive">0</span>
+    </div>
+    <div class="badge">
+      <strong>Preparing</strong>
+      <span id="badgePrep">0</span>
+    </div>
+    <div class="badge">
+      <strong>Ready</strong>
+      <span id="badgeReady">0</span>
+    </div>
+    <div class="badge">
+      <strong>Completed Today</strong>
+      <span id="badgeDone">0</span>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="col" id="colPending">
+      <h2>Pending / New <span>Fresh from menu</span></h2>
+      <div id="pendingList"></div>
+    </div>
+
+    <div class="col" id="colPrep">
+      <h2>Preparing <span>In progress</span></h2>
+      <div id="prepList"></div>
+    </div>
+
+    <div class="col" id="colReady">
+      <h2>Ready / Completed <span>Serve / pick-up</span></h2>
+      <div id="readyList"></div>
+    </div>
+  </div>
+
+  <footer>
+    Logged in as staff/admin • Auto-refreshing every 7 seconds
+  </footer>
+</div>
+
+<script>
+async function fetchOrders(){
+  try{
+    const res = await fetch('/api/orders/list');
+    const data = await res.json();
+    renderOrders(data.orders || []);
+  }catch(e){
+    console.error('Failed to fetch orders', e);
+  }
+}
+
+function renderOrders(orders){
+  const pendingBox = document.getElementById('pendingList');
+  const prepBox = document.getElementById('prepList');
+  const readyBox = document.getElementById('readyList');
+
+  pendingBox.innerHTML = '';
+  prepBox.innerHTML = '';
+  readyBox.innerHTML = '';
+
+  let active = 0, prep = 0, ready = 0, done = 0;
+
+  orders.forEach(o=>{
+    const card = buildOrderCard(o);
+
+    if(o.status === 'Pending'){
+      pendingBox.appendChild(card);
+      active++;
+    }else if(o.status === 'Preparing'){
+      prepBox.appendChild(card);
+      active++; prep++;
+    }else if(o.status === 'Ready'){
+      readyBox.appendChild(card);
+      active++; ready++;
+    }else if(o.status === 'Completed'){
+      readyBox.appendChild(card);
+      done++;
+    }else if(o.status === 'Cancelled'){
+      readyBox.appendChild(card);
+    }
+  });
+
+  document.getElementById('badgeActive').textContent = active;
+  document.getElementById('badgePrep').textContent = prep;
+  document.getElementById('badgeReady').textContent = ready;
+  document.getElementById('badgeDone').textContent = done;
+}
+
+function buildOrderCard(o){
+  const wrap = document.createElement('div');
+  wrap.className = 'order';
+
+  // header
+  const header = document.createElement('div');
+  header.className = 'order-header';
+
+  const left = document.createElement('div');
+  left.innerHTML = `<span class="order-id">Order #${o.id}</span>`;
+
+  const right = document.createElement('div');
+  right.className = 'order-time';
+  right.textContent = o.created_at || '';
+
+  header.appendChild(left);
+  header.appendChild(right);
+  wrap.appendChild(header);
+
+  // status tag
+  const tag = document.createElement('span');
+  tag.className = 'status-tag ' + statusClass(o.status);
+  tag.textContent = o.status || 'Pending';
+  wrap.appendChild(tag);
+
+  // items
+  const ul = document.createElement('ul');
+  ul.className = 'order-items';
+
+  (o.items || []).forEach((it, idx)=>{
+    const li = document.createElement('li');
+    const milk = it.milk ? ` • ${it.milk}` : '';
+    const cup = it.cup ? ` • ${it.cup}` : '';
+    const extra = it.extraShot ? ' • Extra shot' : '';
+    li.textContent = `${idx+1}. ${it.name || 'Drink'}${milk}${cup}${extra}`;
+    ul.appendChild(li);
+  });
+
+  wrap.appendChild(ul);
+
+  // notes
+  if(o.notes){
+    const notes = document.createElement('div');
+    notes.className = 'order-notes';
+    notes.textContent = 'Notes: ' + o.notes;
+    wrap.appendChild(notes);
+  }
+
+  // total
+  const total = document.createElement('div');
+  total.className = 'order-total';
+  total.textContent = `Total: ${Number(o.total || 0).toFixed(3)} KWD`;
+  wrap.appendChild(total);
+
+  // actions
+  const actions = document.createElement('div');
+  actions.className = 'action-row';
+
+  // Pending / Preparing / Ready flow
+  const btnPrep = document.createElement('button');
+  btnPrep.className = 'action-btn btn-prep';
+  btnPrep.textContent = 'Preparing';
+  btnPrep.onclick = ()=>updateStatus(o.id,'Preparing');
+
+  const btnReady = document.createElement('button');
+  btnReady.className = 'action-btn btn-ready';
+  btnReady.textContent = 'Ready';
+  btnReady.onclick = ()=>updateStatus(o.id,'Ready');
+
+  const btnDone = document.createElement('button');
+  btnDone.className = 'action-btn btn-done';
+  btnDone.textContent = 'Completed';
+  btnDone.onclick = ()=>updateStatus(o.id,'Completed');
+
+  const btnCancel = document.createElement('button');
+  btnCancel.className = 'action-btn btn-cancel';
+  btnCancel.textContent = 'Cancel';
+  btnCancel.onclick = ()=>updateStatus(o.id,'Cancelled');
+
+  actions.appendChild(btnPrep);
+  actions.appendChild(btnReady);
+  actions.appendChild(btnDone);
+  actions.appendChild(btnCancel);
+
+  wrap.appendChild(actions);
+
+  return wrap;
+}
+
+function statusClass(status){
+  switch(status){
+    case 'Pending': return 'status-pending';
+    case 'Preparing': return 'status-preparing';
+    case 'Ready': return 'status-ready';
+    case 'Completed': return 'status-completed';
+    case 'Cancelled': return 'status-cancelled';
+    default: return 'status-pending';
+  }
+}
+
+async function updateStatus(id,status){
+  try{
+    await fetch('/api/orders/update_status',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({order_id:id,status})
+    });
+    fetchOrders();
+  }catch(e){
+    console.error('Failed to update status', e);
+  }
+}
+
+/* init */
+fetchOrders();
+setInterval(fetchOrders, 7000);
+</script>
+
+</body>
+</html>

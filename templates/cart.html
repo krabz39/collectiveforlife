@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cart — Collective for Life</title>
+
+<style>
+:root{
+  --dark:#021024;
+  --mid:#052659;
+  --mist:#7DA0CA;
+  --steam:#C1E8FF;
+  --card:#ffffff;
+}
+
+/* GLOBAL */
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  margin:0;padding:0;
+  background:var(--steam);
+  color:var(--mid);
+}
+
+/* HEADER */
+header{
+  text-align:center;
+  padding:18px 10px;
+  background:var(--mid);
+  color:white;
+  font-size:20px;
+  font-weight:800;
+}
+
+/* MAIN BOX */
+.cart-container{
+  width:92%;
+  max-width:520px;
+  margin:20px auto;
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 8px 25px rgba(0,0,0,.18);
+}
+
+/* ITEM CARD */
+.cart-item{
+  background:#f4f8ff;
+  border:1px solid var(--mist);
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:14px;
+}
+.cart-title{
+  font-size:17px;
+  font-weight:700;
+  color:var(--mid);
+}
+.cart-meta{
+  margin-top:6px;
+  font-size:14px;
+  line-height:1.45;
+}
+.remove-btn{
+  margin-top:10px;
+  background:#d11a2a;
+  color:white;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+/* TOTAL */
+.total-box{
+  margin-top:20px;
+  padding:16px;
+  background:#ffffff;
+  border-radius:14px;
+  border:2px solid var(--mid);
+  font-size:19px;
+  font-weight:800;
+  text-align:center;
+}
+
+/* BUTTONS */
+.btn{
+  width:100%;
+  padding:14px;
+  background:var(--mid);
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:700;
+  margin-top:12px;
+  cursor:pointer;
+}
+.btn:hover{
+  background:var(--dark);
+}
+
+/* NOTES */
+textarea{
+  width:100%;
+  height:85px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--mid);
+  margin-top:10px;
+  font-size:14px;
+  resize:none;
+}
+
+/* BACK BUTTON */
+.back-btn{
+  display:block;
+  text-align:center;
+  margin-top:20px;
+  padding:10px;
+  color:var(--mid);
+  font-weight:700;
+  text-decoration:none;
+}
+.back-btn:hover{
+  color:var(--dark);
+}
+</style>
+</head>
+
+<body>
+
+<header>🛒 Your Order</header>
+
+<!-- CART LIST -->
+<div class="cart-container" id="cartBox"></div>
+
+<!-- ACTION BOX -->
+<div class="cart-container">
+
+  <textarea id="notes" placeholder="Add notes (no sugar, light ice, less milk...)"></textarea>
+
+  <div class="total-box" id="totalBox">Total: 0.000 KWD</div>
+
+  <button class="btn" onclick="placeOrder()">Place Order</button>
+  <button class="btn" style="background:#d11a2a" onclick="clearCart()">Clear Cart</button>
+
+  <a href="/menu" class="back-btn">← Back to Menu</a>
+</div>
+
+<script>
+/* ============================
+   LOAD CART
+============================ */
+let cart = JSON.parse(localStorage.getItem("collective_cart") || "[]");
+
+function renderCart(){
+  const box = document.getElementById("cartBox");
+  box.innerHTML = "";
+
+  if(cart.length === 0){
+    box.innerHTML = `
+      <p style="text-align:center;color:var(--mid);font-weight:600;">
+        Your cart is empty.
+      </p>`;
+    document.getElementById("totalBox").textContent = "Total: 0.000 KWD";
+    return;
+  }
+
+  let total = 0;
+
+  cart.forEach((item,index)=>{
+    let itemTotal = parseFloat(item.price);
+
+    /* NEW: milk extra pricing */
+    if(item.milkPrice) itemTotal += parseFloat(item.milkPrice);
+
+    if(item.extraShot) itemTotal += 0.200;
+
+    total += itemTotal;
+
+    let milkLine = item.milk ? `Milk: ${item.milk}` : "";
+    if(item.milkPrice)
+      milkLine += ` (+${parseFloat(item.milkPrice).toFixed(3)} KWD)`;
+
+    let extraLine = item.extraShot ? "Extra Shot: +0.200 KWD<br>" : "";
+    let variantLine = item.variant ? `Variant: ${item.variant}<br>` : "";
+    let stockLine = item.stock_status ? `<span style="color:#d11a2a;font-weight:700;">${item.stock_status.toUpperCase()}</span><br>` : "";
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+
+    div.innerHTML = `
+      <div class="cart-title">${item.name}</div>
+      <div class="cart-meta">
+        ${milkLine ? milkLine + "<br>" : ""}
+        ${item.cup ? `Cup: ${item.cup}<br>` : ""}
+        ${variantLine}
+        ${stockLine}
+        ${extraLine}
+        Base: ${item.price} KWD<br>
+      </div>
+
+      <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+    `;
+
+    box.appendChild(div);
+  });
+
+  document.getElementById("totalBox").textContent = `Total: ${total.toFixed(3)} KWD`;
+}
+
+function removeItem(i){
+  cart.splice(i,1);
+  localStorage.setItem("collective_cart", JSON.stringify(cart));
+  renderCart();
+}
+
+function clearCart(){
+  localStorage.removeItem("collective_cart");
+  cart = [];
+  renderCart();
+}
+
+/* ============================
+   BACKEND ORDER + WHATSAPP
+============================ */
+async function placeOrder(){
+  if(cart.length === 0){
+    alert("Your cart is empty.");
+    return;
+  }
+
+  const total = parseFloat(
+    document.getElementById("totalBox")
+      .textContent.replace("Total:","")
+      .replace("KWD","")
+  );
+
+  const notes = document.getElementById("notes").value.trim();
+
+  /* 1️⃣ Send order to backend (staff dashboard/orders list) */
+  await fetch("/api/orders/create", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      items: cart,
+      total: total,
+      notes: notes
+    })
+  });
+
+  /* 2️⃣ Build WhatsApp message */
+  let msg = "🧾 *Collective for Life Order*\n\n";
+
+  cart.forEach((i,idx)=>{
+    msg += `#${idx+1} — *${i.name}*\n`;
+
+    if(i.milk) msg += `Milk: ${i.milk}\n`;
+    if(i.milkPrice) msg += `Milk Add: +${parseFloat(i.milkPrice).toFixed(3)} KWD\n`;
+
+    if(i.variant) msg += `Variant: ${i.variant}\n`;
+    if(i.stock_status) msg += `Stock: ${i.stock_status.toUpperCase()}\n`;
+
+    if(i.cup) msg += `Cup: ${i.cup}\n`;
+    if(i.extraShot) msg += `Extra Shot: +0.200 KWD\n`;
+
+    msg += `Base Price: ${i.price} KWD\n\n`;
+  });
+
+  if(notes) msg += `📌 Notes:\n${notes}\n\n`;
+
+  msg += `Total: *${total.toFixed(3)} KWD*`;
+
+  const encoded = encodeURIComponent(msg);
+  const number = "96565914413"; // ← set your café number
+
+  /* 3️⃣ Open WhatsApp */
+  window.location.href = `https://wa.me/${number}?text=${encoded}`;
+
+  /* 4️⃣ Reset cart */
+  clearCart();
+}
+
+/* INIT */
+renderCart();
+</script>
+
+</body>
+</html>

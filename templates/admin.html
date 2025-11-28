@@ -7,21 +7,20 @@
 
 <style>
 :root {
-  --dark:#021024; 
-  --mid:#052659; 
-  --mist:#7DA0CA; 
+  --dark:#021024;
+  --mid:#052659;
+  --mist:#7DA0CA;
   --steam:#C1E8FF;
+  --card:#ffffff;
 }
+
 body {
-  font-family:'Inter',sans-serif;
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
   background:var(--steam);
-  margin:0; padding:20px; 
+  margin:0; padding:20px;
   color:var(--dark);
 }
 
-/* ------------------------------
-   HEADER CENTERED (NO OVERLAP)
--------------------------------- */
 header {
   text-align:center;
   max-width:900px;
@@ -29,152 +28,163 @@ header {
 }
 header h1 {
   margin:0;
-  font-size:22px;
-  font-weight:700;
+  font-size:24px;
+  font-weight:800;
+  color:var(--mid);
 }
 
-/* Button Row BELOW header */
 .header-actions {
   margin:10px auto 25px auto;
   max-width:900px;
   display:flex;
   justify-content:center;
+  flex-wrap:wrap;
   gap:10px;
 }
-
-/* Buttons */
 .small-btn {
-  padding:6px 12px;
-  font-size:13px;
-  border-radius:6px;
+  padding:10px 16px;
+  font-size:14px;
+  border-radius:12px;
   border:none;
   cursor:pointer;
   background:var(--mid);
   color:white;
   text-decoration:none;
-  transition:.3s;
+  transition:.25s;
+  font-weight:600;
 }
 .small-btn:hover { background:var(--dark); }
 
-/* Form + Inputs */
 form {
-  display:flex; 
-  flex-wrap:wrap; 
-  justify-content:center; 
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
   gap:10px;
-  background:white; 
-  padding:15px; 
-  border-radius:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.1);
-  max-width:900px; 
+  background:white;
+  padding:18px;
+  border-radius:16px;
+  box-shadow:0 5px 20px rgba(0,0,0,.12);
+  max-width:900px;
   margin:auto;
 }
-.form-row { display:flex; gap:6px; flex:1 1 100%; }
-input,select {
-  padding:10px 12px;
+
+.form-row { display:flex; gap:8px; flex:1 1 100%; }
+
+input,select,textarea {
+  padding:14px 16px;
   border:1px solid var(--mid);
-  border-radius:6px;
-  font-size:15px;
+  border-radius:12px;
+  font-size:16px;
   width:100%;
+  background:white;
 }
+
 input[type=file] {
   background:var(--steam);
   border:1px dashed var(--mid);
 }
+
 button {
   background:var(--mid);
   color:white;
   border:none;
-  border-radius:6px;
-  padding:10px 15px;
+  border-radius:12px;
+  padding:12px 16px;
   cursor:pointer;
-  transition:.3s;
+  font-size:15px;
+  font-weight:600;
+  transition:.25s;
 }
 button:hover { background:var(--dark); }
 
-/* Translate + Category buttons */
 .translate-btn, .add-cat-btn {
   background:var(--mist);
   color:var(--dark);
 }
 .translate-btn:hover, .add-cat-btn:hover {
-  background:var(--mid); color:white;
+  background:var(--mid);
+  color:white;
 }
 
-/* Table */
-.table-container {
-  overflow-x:auto;
-  margin-top:25px;
-  max-width:95%;
-  margin:auto;
+/* NEW: OPTION TOGGLE BOX */
+.option-toggle-box {
+  flex:1 1 100%;
+  padding:15px;
+  border:1px solid var(--mist);
+  border-radius:12px;
+  background:#f5f9ff;
+  margin-top:6px;
 }
+.option-toggle {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:6px 0;
+  font-size:15px;
+  font-weight:600;
+}
+
+.table-container { overflow-x:auto; margin-top:30px; max-width:95%; margin:auto; }
+
 table {
   width:100%;
   border-collapse:collapse;
   background:white;
-  border-radius:10px;
+  border-radius:16px;
   overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
 }
 th,td {
   border:1px solid var(--mist);
-  padding:10px;
+  padding:12px;
   text-align:center;
+  font-size:14px;
 }
 th { background:var(--mid); color:white; }
 
 td img {
-  max-width:60px;
-  border-radius:6px;
+  max-width:70px;
+  border-radius:10px;
   cursor:pointer;
-  transition:.3s;
+  transition:.25s;
 }
-td img:hover { transform:scale(1.05); }
+td img:hover { transform:scale(1.06); }
 
-a.edit { color:var(--mid); font-weight:bold; }
-a { color:#d11a2a; text-decoration:none; font-weight:bold; }
+.stockTag { padding:6px 12px; border-radius:10px; font-size:12px; color:white; }
+.stock-ok { background:#28a745; }
+.stock-low { background:#e6b400; }
+.stock-out { background:#d11a2a; }
 
-/* Modal */
 .modal {
   display:none;
   position:fixed;
   z-index:999;
   left:0; top:0;
   width:100%; height:100%;
-  background:rgba(0,0,0,.85);
+  background:rgba(0,0,0,.88);
   justify-content:center;
   align-items:center;
+  padding:20px;
 }
 .modal img {
-  max-width:90%;
+  max-width:95%;
   max-height:85%;
-  border-radius:12px;
-}
-
-/* Mobile */
-@media(max-width:768px){
-  .header-actions { flex-direction:column; }
-  .small-btn { width:100%; text-align:center; }
-  form { padding:20px; }
-  table { font-size:13px; }
+  border-radius:16px;
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <h1>Admin Dashboard — Collective for Life</h1>
 </header>
 
-<!-- BUTTONS BELOW HEADER -->
 <div class="header-actions">
   <a href="/menu" class="small-btn">← Menu</a>
   <button class="small-btn" id="adminTranslateBtn">🌐 Arabic</button>
-  <!-- NEW BACKGROUND BUTTON -->
   <button class="small-btn" onclick="window.location.href='/admin/background'">🎨 Background</button>
 </div>
 
-<!-- FORM -->
 <form method="POST" enctype="multipart/form-data" id="menuForm">
 
   <div class="form-row">
@@ -201,30 +211,83 @@ a { color:#d11a2a; text-decoration:none; font-weight:bold; }
   <input type="text" name="origin" placeholder="Origin">
   <input type="text" name="process" placeholder="Process">
   <input type="text" name="flavors" placeholder="Flavors">
-  <input type="text" name="price" placeholder="Price (KWD)">
+
+  <input type="text" name="price" placeholder="Base Price (KWD)">
+
+  <textarea name="milk_prices" placeholder='Milk Extra Pricing JSON
+{"Oat Milk":0.250,"Lactose Free":0.150}'></textarea>
+
+  <input type="text" name="milk_extra_price" placeholder="Milk Extra Price (KWD)">
+
+  <textarea name="variants" placeholder='Drink Variants (JSON)
+["Hot","Iced"]'></textarea>
+
+  <!-- ⭐ NEW OPTION TOGGLES -->
+  <div class="option-toggle-box">
+    <label class="option-toggle">
+      <input type="checkbox" name="use_milk" value="1"> Enable Milk Options
+    </label>
+
+    <label class="option-toggle">
+      <input type="checkbox" name="use_variant" value="1"> Enable Hot / Iced Variants
+    </label>
+
+    <label class="option-toggle">
+      <input type="checkbox" name="use_cup" value="1"> Enable Ceramic / Takeaway
+    </label>
+
+    <label class="option-toggle">
+      <input type="checkbox" name="use_extrashot" value="1"> Enable Extra Shot
+    </label>
+  </div>
+
+  <input type="number" name="stock_quantity" placeholder="Stock Quantity">
+
+  <select name="stock_status">
+    <option value="Available">Available</option>
+    <option value="low">Almost Out</option>
+    <option value="sold_out">Sold Out</option>
+  </select>
+
   <input type="file" name="image">
 
   <button type="submit">Add Item</button>
+
 </form>
 
-<!-- TABLE -->
 <div class="table-container">
 <table>
   <tr>
-    <th>#</th><th>Image</th><th>Category</th><th>EN</th><th>AR</th>
-    <th>Origin</th><th>Process</th><th>Flavors</th><th>Price</th><th>Actions</th>
+    <th>#</th>
+    <th>Image</th>
+    <th>Category</th>
+    <th>EN</th>
+    <th>AR</th>
+    <th>Origin</th>
+    <th>Process</th>
+    <th>Flavors</th>
+    <th>Price</th>
+    <th>Milk Pricing</th>
+    <th>Extra Milk</th>
+    <th>Variants</th>
+    <th>Stock Qty</th>
+    <th>Stock</th>
+    <th>Actions</th>
   </tr>
+
   {% for item in menu_items %}
   <tr>
     <td>{{ loop.index }}</td>
+
     <td>
       {% if item['image'] %}
-      <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}"
-           onclick="showModal('{{ url_for('static', filename='uploads/' ~ item['image']) }}')">
+        <img src="{{ url_for('static', filename='uploads/' ~ item['image']) }}"
+             onclick="showModal('{{ url_for('static', filename='uploads/' ~ item['image']) }}')">
       {% else %}
-      <span style="color:#999;">No Image</span>
+        <span style="color:#888;">No Image</span>
       {% endif %}
     </td>
+
     <td>{{ item['category'] }}</td>
     <td>{{ item['name_en'] }}</td>
     <td>{{ item['name_ar'] }}</td>
@@ -232,6 +295,25 @@ a { color:#d11a2a; text-decoration:none; font-weight:bold; }
     <td>{{ item['process'] or '-' }}</td>
     <td>{{ item['flavors'] or '-' }}</td>
     <td>{{ item['price'] }}</td>
+
+    <td><pre style="white-space:pre-wrap;font-size:12px;">{{ item['milk_prices'] }}</pre></td>
+
+    <td>{{ item['milk_extra_price'] }}</td>
+
+    <td><pre style="white-space:pre-wrap;font-size:12px;">{{ item['variants'] }}</pre></td>
+
+    <td>{{ item['stock_quantity'] }}</td>
+
+    <td>
+      {% if item['stock_status']=="sold_out" %}
+        <span class="stockTag stock-out">Sold Out</span>
+      {% elif item['stock_status']=="low" %}
+        <span class="stockTag stock-low">Low</span>
+      {% else %}
+        <span class="stockTag stock-ok">Available</span>
+      {% endif %}
+    </td>
+
     <td>
       <a class="edit" href="/edit/{{ item['id'] }}">✏️</a>
       <a href="/delete/{{ item['id'] }}">🗑️</a>
@@ -241,60 +323,54 @@ a { color:#d11a2a; text-decoration:none; font-weight:bold; }
 </table>
 </div>
 
-<!-- IMAGE MODAL -->
 <div id="imageModal" class="modal" onclick="closeModal()">
   <img id="modalImage" src="">
 </div>
 
 <script>
-/* FULL PAGE TRANSLATION */
-async function translateAdminPage(target){
-  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
-  const texts=[], nodes=[];
-  while(walker.nextNode()){
-    const node=walker.currentNode;
-    const txt=node.nodeValue.trim();
-    if(txt && !['SCRIPT','STYLE'].includes(node.parentNode.tagName)){
-      texts.push(txt); nodes.push(node);
-    }
-  }
-  const res=await fetch('/translate_all',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({texts,target})
-  });
-  const data=await res.json();
-  data.translations.forEach((t,i)=>{ if(nodes[i]) nodes[i].nodeValue=t; });
-}
-
-/* Toggle Arabic/English */
-document.getElementById("adminTranslateBtn")
-.addEventListener("click", async ()=>{
-  const btn=document.getElementById("adminTranslateBtn");
-  const toArabic = btn.textContent.includes("Arabic");
-  const target = toArabic ? "ar" : "en";
-  btn.textContent = toArabic ? "English" : "Arabic";
-  document.documentElement.dir = toArabic ? "rtl" : "ltr";
-  await translateAdminPage(target);
-});
-
-/* Field Instant Translation */
 async function manualTranslate(lang){
   const en=document.getElementById('name_en');
   const ar=document.getElementById('name_ar');
   let text='', target='';
+
   if(lang==='en'){ text=en.value; target='ar'; }
   else{ text=ar.value; target='en'; }
   if(!text)return;
+
   const res=await fetch('/translate',{
-    method:'POST',headers:{'Content-Type':'application/json'},
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
     body:JSON.stringify({text,target})
   });
+
   const d=await res.json();
   if(target==='ar') ar.value=d.translated;
   else en.value=d.translated;
 }
 
-/* Image Modal */
+function addCategory(){
+  const select=document.getElementById("categorySelect");
+  const newCat=prompt("Enter new category:");
+  if(newCat && newCat.trim()!==""){
+    const opt=document.createElement("option");
+    opt.textContent=newCat.trim();
+    select.appendChild(opt);
+    select.value=newCat.trim();
+  }
+}
+
+function removeCategory(){
+  const select=document.getElementById("categorySelect");
+  const remove=prompt("Enter category to delete:");
+  if(!remove) return;
+
+  fetch("/categories/delete",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name:remove})
+  }).then(()=>location.reload());
+}
+
 function showModal(src){
   document.getElementById("modalImage").src=src;
   document.getElementById("imageModal").style.display="flex";

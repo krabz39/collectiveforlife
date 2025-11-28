@@ -12,13 +12,15 @@
   --mist:#7DA0CA;
   --steam:#C1E8FF;
   --card:#ffffff;
+  --soldout:#b30000;
+  --lowstock:#e6b800;
 }
 
+/* GLOBAL */
 *{box-sizing:border-box;scroll-behavior:smooth;}
-
 body{
   font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  margin:0; padding:0;
+  margin:0;padding:0;
   color:var(--mid);
   overflow-x:hidden;
 }
@@ -35,238 +37,186 @@ body{
 #bg-fallback{
   position:absolute;top:0;left:0;width:100%;height:100%;
   background:linear-gradient(to bottom,var(--dark),var(--mid),var(--mist));
-  z-index:-11;
 }
 
-/* GLASS HERO */
+/* HEADER */
 header{
-  width:92%;
-  max-width:600px;
-  margin:20px auto 10px auto;
-  padding:22px 20px;
-  border-radius:20px;
+  width:92%;max-width:600px;margin:20px auto 10px auto;
+  padding:22px 20px;border-radius:20px;
   background:rgba(255,255,255,0.12);
   backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
   border:1px solid rgba(255,255,255,0.25);
-  box-shadow:0 8px 25px rgba(0,0,0,0.15);
-  text-align:center;
-  position:sticky;
-  top:10px;
-  z-index:50;
+  text-align:center;position:sticky;top:10px;z-index:50;
 }
+h1{margin:0;font-weight:800;color:white;}
+h1 .secret{color:var(--steam);cursor:pointer;}
+.sub{margin-top:6px;color:white;opacity:.85;font-size:15px;}
 
-h1{
-  margin:0;
-  font-weight:800;
-  color:white;
-  letter-spacing:.4px;
-}
-h1 .secret{
-  color:var(--steam);
-  cursor:pointer;
-  text-decoration:none;
-}
-.sub{
-  margin-top:6px;
-  color:white;
-  opacity:.85;
-  font-size:15px;
-}
-
+/* LANGUAGE TOGGLE */
 .lang-toggle{
-  position:fixed;top:14px;right:14px;z-index:60;
-  background:var(--mid);color:#fff;border:none;
-  padding:8px 16px;border-radius:20px;
-  cursor:pointer;font-weight:600;font-size:14px;
+  margin-top:10px;
+  font-size:14px;
+  color:white;
+  cursor:pointer;
+  background:rgba(255,255,255,0.15);
+  padding:6px 14px;
+  border-radius:20px;
+  display:inline-block;
 }
 
-/* SEARCH + FILTER */
+/* SEARCH */
 #searchBar{
-  width:92%;max-width:480px;margin:12px auto 4px auto;
+  width:92%;max-width:480px;margin:12px auto;
   padding:10px 14px;border-radius:14px;
-  border:1px solid var(--mist);
-  font-size:15px;color:var(--dark);
-  background:#fff;
+  border:1px solid var(--mist);background:white;
 }
+
+/* FILTERS */
 #filters{
-  display:flex;gap:8px;width:92%;margin:auto;flex-wrap:wrap;margin-bottom:10px;
+  display:flex;gap:8px;width:92%;margin:auto;margin-bottom:12px;
+  flex-wrap:wrap;
 }
 .filter-chip{
-  padding:6px 12px;
-  background:#fff;
-  border:1px solid var(--mist);
-  color:var(--mid);
-  border-radius:20px;
-  font-size:13px;
-  cursor:pointer;
-  transition:.25s;
+  padding:6px 12px;background:white;border:1px solid var(--mist);
+  border-radius:20px;font-size:13px;color:var(--mid);
+  cursor:pointer;transition:.25s;
 }
-.filter-chip.active{
-  background:var(--mid);
-  color:white;
-}
+.filter-chip.active{background:var(--mid);color:white;}
 
 /* CATEGORY */
-section.category{margin:0 0 26px;}
+section.category{margin-bottom:26px;}
 section.category h2{
-  position:sticky;top:120px;
-  padding:8px 16px;margin:0;
-  color:var(--mid);
-  background:#fff;
-  border-bottom:2px solid var(--mist);
-  z-index:20;
+  position:sticky;top:120px;background:white;
+  padding:8px 16px;border-bottom:2px solid var(--mist);
+  z-index:20;color:var(--mid);margin:0;
 }
 
-/* WRAPPER FIX */
-.scroll-wrapper{
-  position:relative;display:flex;align-items:center;
-  overflow:hidden;
-}
-
+/* HORIZONTAL */
+.scroll-wrapper{position:relative;display:flex;align-items:center;overflow:hidden;}
 .scroll-btn{
   position:absolute;top:50%;transform:translateY(-50%);
-  background:var(--mid);border:none;color:white;
-  border-radius:50%;cursor:pointer;
-  width:36px;height:36px;font-size:18px;
-  opacity:0;visibility:hidden;transition:.3s;
+  width:36px;height:36px;border-radius:50%;
+  border:none;background:var(--mid);color:white;
+  opacity:0;visibility:hidden;font-size:20px;cursor:pointer;
+  transition:.3s;
 }
+.scroll-btn.left{left:4px;}
+.scroll-btn.right{right:4px;}
 .scroll-btn.show{opacity:.9;visibility:visible;}
-.scroll-btn.left{left:6px;}
-.scroll-btn.right{right:6px;}
 
 .row{
-  display:flex;gap:14px;
-  padding:10px 48px;
-  overflow-x:auto;
-  overflow-y:hidden;
-  scroll-behavior:smooth;
-  scroll-snap-type:x proximity;
-  -webkit-overflow-scrolling:touch;
+  display:flex;gap:14px;padding:10px 48px;
+  overflow-x:auto;scroll-snap-type:x proximity;
 }
 
-/* CARDS */
+/* CARD */
 .card{
-  flex:0 0 200px;
-  scroll-snap-align:start;
-  border-radius:12px;
-  padding:12px;
-  text-align:center;
-  background:#fff;
-  border:1px solid var(--mist);
-  box-shadow:0px 2px 6px rgba(0,0,0,0.08);
-  transition:.25s;
-  cursor:pointer;
-}
-.card:hover{transform:translateY(-3px);}
-
-.card img{
-  width:100%;height:140px;object-fit:cover;
-  border-radius:10px;margin-bottom:10px;
-  background:#eef6ff;
-}
-
-.name-en,.name-ar{
-  margin:6px 0 4px;font-size:16px;color:var(--mid);font-weight:700;
-}
-
-.price{
-  margin:0;font-size:15px;font-weight:800;color:var(--mid);
-}
-
-.meta-info{
-  margin-top:8px;text-align:left;font-size:12px;color:var(--dark);
-}
-.meta-info span{
-  display:block;background:#eef3f7;border-radius:6px;
-  padding:5px 8px;margin:3px 0;color:var(--mid);
-}
-.meta-info span strong{
-  font-weight:700;margin-right:4px;color:var(--dark);
-}
-
-/* POPUP MODAL */
-#drinkModal{
-  position:fixed;
-  top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.65);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:200;
-  padding:20px;
-}
-.modal-box{
-  width:100%;
-  max-width:430px;
-  background:white;
-  border-radius:16px;
-  padding:18px;
-  text-align:center;
-  animation:pop .25s ease;
+  flex:0 0 200px;background:white;border-radius:12px;
+  padding:12px;text-align:center;border:1px solid var(--mist);
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+  scroll-snap-align:start;cursor:pointer;transition:.25s;
   position:relative;
 }
-@keyframes pop{
-  from{transform:scale(.85);opacity:0;}
-  to{transform:scale(1);opacity:1;}
+.card:hover{transform:translateY(-4px);}
+.card img{
+  width:100%;height:140px;object-fit:cover;
+  border-radius:10px;background:#eef6ff;margin-bottom:10px;
 }
+.price{font-weight:800;margin-top:6px;}
 
+/* STOCK */
+.card .stock-tag{
+  position:absolute;top:8px;left:8px;
+  padding:4px 8px;border-radius:6px;
+  font-size:11px;font-weight:700;color:white;
+}
+.card .soldout{background:var(--soldout);}
+.card .lowstock{background:var(--lowstock);}
+
+/* MODAL */
+#drinkModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.6);
+  display:none;align-items:center;justify-content:center;
+  z-index:300;padding:20px;
+}
+.modal-box{
+  width:100%;max-width:420px;background:white;
+  border-radius:18px;padding:20px;
+  animation:fadeZoom .25s ease;position:relative;
+}
+@keyframes fadeZoom{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+
+/* MEDIA */
 .modal-media{
-  width:100%;
-  height:230px;
-  border-radius:12px;
-  background:#eef3f7;
-  object-fit:cover;
-  margin-bottom:14px;
+  width:100%;height:240px;border-radius:14px;
+  object-fit:cover;margin-bottom:14px;background:#eef3f7;
 }
 
-.modal-title{font-size:20px;font-weight:800;color:var(--mid);}
-.modal-price{font-size:17px;font-weight:700;color:var(--dark);margin:6px 0;}
+/* TEXT */
+.modal-title{font-size:22px;font-weight:800;color:var(--mid);}
+.modal-price{font-size:18px;font-weight:700;margin-top:4px;}
 
-.modal-details{
-  text-align:left;
-  font-size:14px;
-  color:var(--mid);
-}
 .modal-details span{
-  display:block;
-  padding:6px 8px;
-  margin:4px 0;
-  background:#eef3f7;
-  border-radius:8px;
+  display:block;background:#eef3f7;padding:6px 8px;
+  border-radius:8px;margin:4px 0;
 }
 
+/* OPTIONS */
+.option-group{margin-top:14px;}
+.option-title{font-weight:700;margin-bottom:4px;color:var(--mid);}
+.option-select{
+  width:100%;padding:10px;border:1px solid var(--mist);
+  font-size:15px;border-radius:10px;
+}
+.option-checkbox{
+  display:flex;align-items:center;gap:8px;
+  margin-top:10px;font-size:15px;
+}
+
+/* CART BUTTONS */
+#addToCartBtn{
+  width:100%;padding:14px;background:var(--mid);
+  color:white;border:none;border-radius:12px;
+  margin-top:18px;font-weight:700;font-size:16px;
+}
 #closeModal{
-  margin-top:14px;
-  padding:10px 20px;
-  border:none;
-  background:var(--mid);
-  color:white;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
+  width:100%;padding:12px;background:#d11a2a;color:white;
+  border:none;border-radius:12px;margin-top:10px;font-weight:700;
 }
 
-/* NEXT / PREV BUTTONS */
+/* NAV */
 .modal-nav{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  background:rgba(0,0,0,0.55);
-  color:white;
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  cursor:pointer;
-  user-select:none;
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:white;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;
 }
 #modalPrev{left:-14px;}
 #modalNext{right:-14px;}
 
+/* CART FLOATING */
+#cartBubble{
+  position:fixed;bottom:22px;right:22px;
+  width:62px;height:62px;background:var(--mid);color:white;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:26px;cursor:pointer;z-index:500;
+  box-shadow:0 6px 18px rgba(0,0,0,.28);
+}
+#cartBubble span{
+  position:absolute;top:-6px;right:-6px;
+  background:#d11a2a;padding:4px 8px;font-size:12px;border-radius:12px;
+}
+#cartBar{
+  position:fixed;bottom:0;left:0;width:100%;
+  background:var(--mid);padding:14px;color:white;
+  text-align:center;font-size:18px;font-weight:700;display:none;
+}
+@media(min-width:640px){
+  #cartBubble{display:none;}
+  #cartBar{display:block;}
+}
 </style>
 </head>
 
@@ -275,97 +225,101 @@ section.category h2{
 <!-- BACKGROUND -->
 <div id="bg-wrapper">
   <div id="bg-fallback"></div>
-  <video id="bg-video" autoplay muted loop></video>
+  <video id="bg-video" autoplay muted loop playsinline></video>
   <img id="bg-image">
 </div>
-
-<button class="lang-toggle" id="langBtn">🌐 عربي</button>
 
 <header>
   <h1>Collective for <span class="secret" id="secret">Life</span></h1>
   <p class="sub">Specialty Coffee Menu</p>
-</header>
 
-<!-- GROUP -->
-{% set grouped = {} %}
-{% for it in menu_items %}
-  {% set cat = it['category'] or 'Other' %}
-  {% if cat not in grouped %}{% set _ = grouped.update({cat: []}) %}{% endif %}
-  {% set _ = grouped[cat].append(it) %}
-{% endfor %}
+  <div class="lang-toggle" onclick="toggleLang()">English / العربية</div>
+</header>
 
 <input id="searchBar" placeholder="Search coffee, category, flavor…">
 
+<!-- JINJA GROUPING -->
+{% set grouped = {} %}
+{% for it in menu_items %}
+  {% set cat = it['category'] %}
+  {% if cat not in grouped %}
+    {% set _ = grouped.update({cat: []}) %}
+  {% endif %}
+  {% set _ = grouped[cat].append(it) %}
+{% endfor %}
+
+<!-- FILTERS -->
 <div id="filters">
+  <span class="filter-chip active" onclick="filterAll()">All</span>
   {% for category, items in grouped.items() %}
     <span class="filter-chip" onclick="filterCategory('{{ category }}')">{{ category }}</span>
   {% endfor %}
 </div>
 
+<!-- MENU SECTIONS -->
 {% for category, items in grouped.items() %}
 <section class="category" data-category="{{ category }}">
   <h2>{{ category }}</h2>
 
   <div class="scroll-wrapper">
-    <button class="scroll-btn left">&#9664;</button>
+    <button class="scroll-btn left">&#10094;</button>
 
     <div class="row">
       {% for item in items %}
       <div class="card"
-           data-index="{{ loop.index0 }}"
            data-category-group="{{ category }}"
-           data-name="{{ item.name_en }} {{ item.name_ar }}"
+           data-name="{{ item.name_en }}"
            data-en="{{ item.name_en }}"
            data-ar="{{ item.name_ar }}"
            data-price="{{ item.price }}"
            data-origin="{{ item.origin }}"
            data-process="{{ item.process }}"
            data-flavors="{{ item.flavors }}"
+           data-milkextra="{{ item.milk_extra_price }}"
+           data-variants="{{ item.variants }}"
+           data-stock="{{ item.stock_status }}"
+           data-usemilk="{{ item.use_milk }}"
+           data-usevariant="{{ item.use_variant }}"
+           data-usecup="{{ item.use_cup }}"
+           data-useextrashot="{{ item.use_extrashot }}"
            data-img="{% if item.image %}{{ url_for('static', filename='uploads/' ~ item.image) }}{% endif %}">
 
-        {% if item.image %}
-        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}">
-        {% else %}
-        <img src="data:image/svg+xml,
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'>
-          <rect width='400' height='280' fill='%23C1E8FF'/>
-          <text x='50%' y='50%' font-size='26' text-anchor='middle' fill='%23052659'>
-          Collective for Life
-          </text></svg>">
+        {% if item.stock_status == "sold_out" %}
+          <div class="stock-tag soldout">Sold Out</div>
+        {% elif item.stock_status == "low" %}
+          <div class="stock-tag lowstock">Almost Out</div>
         {% endif %}
 
+        <img src="{% if item.image %}{{ url_for('static', filename='uploads/' ~ item.image) }}{% else %}https://via.placeholder.com/200x140{% endif %}">
         <h3 class="name-en">{{ item.name_en }}</h3>
         <h3 class="name-ar" style="display:none;">{{ item.name_ar }}</h3>
-
         <p class="price">{{ item.price }} KWD</p>
-
-        {% if item.origin or item.process or item.flavors %}
-        <div class="meta-info">
-          {% if item.origin %}<span><strong>Origin:</strong> {{ item.origin }}</span>{% endif %}
-          {% if item.process %}<span><strong>Process:</strong> {{ item.process }}</span>{% endif %}
-          {% if item.flavors %}<span><strong>Flavors:</strong> {{ item.flavors }}</span>{% endif %}
-        </div>
-        {% endif %}
 
       </div>
       {% endfor %}
     </div>
 
-    <button class="scroll-btn right">&#9654;</button>
+    <button class="scroll-btn right">&#10095;</button>
   </div>
 </section>
 {% endfor %}
 
-<footer>
-  <p>Collective for Life — Specialty Coffee • Sharq, Kuwait</p>
-</footer>
+<!-- FLOATING CART -->
+<div id="cartBubble" onclick="location.href='/cart'">
+  🛒
+  <span id="cartCountBubble">0</span>
+</div>
 
-<!-- 🔥 POPUP MODAL -->
+<div id="cartBar" onclick="location.href='/cart'">
+  🛒 <span id="cartCountBar">0</span> items — View Cart
+</div>
+
+<!-- MODAL -->
 <div id="drinkModal">
   <div class="modal-box">
 
-    <div id="modalPrev" class="modal-nav">&#9664;</div>
-    <div id="modalNext" class="modal-nav">&#9654;</div>
+    <div id="modalPrev" class="modal-nav">&#10094;</div>
+    <div id="modalNext" class="modal-nav">&#10095;</div>
 
     <video id="modalVideo" class="modal-media" autoplay muted loop playsinline style="display:none"></video>
     <img id="modalImg" class="modal-media" style="display:none">
@@ -375,52 +329,101 @@ section.category h2{
 
     <div class="modal-details" id="modalDetails"></div>
 
+    <!-- VARIANT -->
+    <div class="option-group" id="variantGroup">
+      <div class="option-title">Choose Variant</div>
+      <select id="variantChoice" class="option-select"></select>
+    </div>
+
+    <!-- MILK -->
+    <div class="option-group" id="milkGroup">
+      <div class="option-title">Milk</div>
+      <select id="milkChoice" class="option-select"></select>
+    </div>
+
+    <!-- CUP -->
+    <div class="option-group" id="cupGroup">
+      <div class="option-title">Cup</div>
+      <select id="cupChoice" class="option-select">
+        <option value="Ceramic">Ceramic</option>
+        <option value="Takeaway">Takeaway</option>
+      </select>
+    </div>
+
+    <div class="option-checkbox" id="extraShotBox">
+      <input type="checkbox" id="extraShot">
+      <label for="extraShot">Extra Shot +0.200 KWD</label>
+    </div>
+
+    <button id="addToCartBtn">Add to Cart</button>
     <button id="closeModal">Close</button>
+
   </div>
 </div>
 
 <script>
-let groupedCards = {};
-document.querySelectorAll("section.category").forEach(section=>{
-  const cat = section.dataset.category;
-  groupedCards[cat] = Array.from(section.querySelectorAll(".card"));
-});
 
-// BACKGROUND
+/* LANGUAGE SWITCH */
+let currentLang = "en";
+function toggleLang(){
+  currentLang = currentLang === "en" ? "ar" : "en";
+  document.querySelectorAll(".name-en").forEach(e => e.style.display = currentLang === "en" ? "block" : "none");
+  document.querySelectorAll(".name-ar").forEach(e => e.style.display = currentLang === "ar" ? "block" : "none");
+
+  document.getElementById("searchBar").placeholder =
+    currentLang === "en"
+      ? "Search coffee, category, flavor…"
+      : "ابحث عن القهوة أو الفئة أو النكهة…";
+}
+
+/* FILTER ALL */
+function filterAll(){
+  document.querySelectorAll(".filter-chip").forEach(x => x.classList.remove("active"));
+  document.querySelector(".filter-chip").classList.add("active");
+  document.querySelectorAll("section.category").forEach(sec => sec.style.display = "block");
+}
+
+/* BACKGROUND */
 async function loadBG(){
-  const res=await fetch("/background/settings");
-  const data=await res.json();
+  const res = await fetch("/background/settings");
+  const bg = await res.json();
 
-  const video=document.getElementById("bg-video");
-  const image=document.getElementById("bg-image");
+  const video = document.getElementById("bg-video");
+  const image = document.getElementById("bg-image");
 
-  if(data.type==="video"){
-    video.src="/static/uploads/"+data.value;
-    video.muted = true;
-    video.loop = true;
-    video.autoplay = true;
+  if(bg.media_type === "video"){
+    video.src = bg.path;
+    video.style.display = "block";
     video.play();
-    video.style.display="block";
-  }
-  else if(data.type==="image"){
-    image.src="/static/uploads/"+data.value;
-    image.style.display="block";
+  } else {
+    image.src = bg.path;
+    image.style.display = "block";
   }
 }
 loadBG();
 
+/* GROUP CARDS */
+let groupedCards = {};
+document.querySelectorAll("section.category").forEach(sec=>{
+  groupedCards[sec.dataset.category] =
+    Array.from(sec.querySelectorAll(".card"));
+});
 
-// SEARCH
+/* SEARCH */
 document.getElementById("searchBar").addEventListener("input", e=>{
-  const q=e.target.value.toLowerCase();
+  const q = e.target.value.toLowerCase();
   document.querySelectorAll(".card").forEach(c=>{
-    c.style.display = c.dataset.name.toLowerCase().includes(q) ? "block" : "none";
+    c.style.display =
+      c.dataset.name.toLowerCase().includes(q) ||
+      (c.dataset.flavors||"").toLowerCase().includes(q) ||
+      (c.dataset.origin||"").toLowerCase().includes(q)
+      ? "block" : "none";
   });
 });
 
-// FILTER
+/* FILTER CATEGORY */
 function filterCategory(cat){
-  document.querySelectorAll(".filter-chip").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".filter-chip").forEach(x => x.classList.remove("active"));
   document.querySelector(`.filter-chip[onclick="filterCategory('${cat}')"]`).classList.add("active");
 
   document.querySelectorAll("section.category").forEach(sec=>{
@@ -428,139 +431,188 @@ function filterCategory(cat){
   });
 }
 
-// SCROLL BUTTONS
+/* SCROLL BUTTONS */
 document.querySelectorAll(".scroll-wrapper").forEach(wrap=>{
-  const row=wrap.querySelector(".row");
-  const left=wrap.querySelector(".left");
-  const right=wrap.querySelector(".right");
+  const row = wrap.querySelector(".row");
+  const left = wrap.querySelector(".left");
+  const right = wrap.querySelector(".right");
 
   function check(){
-    const max=row.scrollWidth-row.clientWidth;
-    left.classList.toggle("show", row.scrollLeft>5);
-    right.classList.toggle("show", row.scrollLeft<max-5);
+    let max = row.scrollWidth - row.clientWidth;
+    left.classList.toggle("show", row.scrollLeft > 10);
+    right.classList.toggle("show", row.scrollLeft < max - 10);
   }
-  row.addEventListener("scroll",check);
+  row.addEventListener("scroll", check);
   check();
 
-  left.onclick = ()=>row.scrollBy({left:-260,behavior:"smooth"});
-  right.onclick = ()=>row.scrollBy({left:260,behavior:"smooth"});
+  left.onclick = ()=>row.scrollBy({left:-240, behavior:"smooth"});
+  right.onclick = ()=>row.scrollBy({left:240, behavior:"smooth"});
 });
 
+/* MODAL COMPONENTS */
+const modal = document.getElementById("drinkModal");
+const modalImg = document.getElementById("modalImg");
+const modalVideo = document.getElementById("modalVideo");
+const modalTitle = document.getElementById("modalTitle");
+const modalPrice = document.getElementById("modalPrice");
+const modalDetails = document.getElementById("modalDetails");
 
-// 🔥 POPUP WITH SWIPE & NEXT/PREV
-const modal=document.getElementById("drinkModal");
-const modalImg=document.getElementById("modalImg");
-const modalVideo=document.getElementById("modalVideo");
-const modalTitle=document.getElementById("modalTitle");
-const modalPrice=document.getElementById("modalPrice");
-const modalDetails=document.getElementById("modalDetails");
+const milkSelect = document.getElementById("milkChoice");
+const variantSelect = document.getElementById("variantChoice");
+const cupSelect = document.getElementById("cupChoice");
+const extraShot = document.getElementById("extraShot");
 
 let currentCategory = "";
 let currentIndex = 0;
+let basePrice = 0;
+let milkExtra = 0;
+let variants = [];
 
 function loadCardData(card){
-  const name = card.dataset.en;
-  const price = card.dataset.price;
-  const origin = card.dataset.origin;
-  const process = card.dataset.process;
-  const flavors = card.dataset.flavors;
-  const img = card.dataset.img || "";
 
-  modalTitle.textContent = name;
-  modalPrice.textContent = price+" KWD";
+  modalTitle.textContent = currentLang === "en" ? card.dataset.en : card.dataset.ar;
+  basePrice = parseFloat(card.dataset.price);
+  milkExtra = parseFloat(card.dataset.milkextra || "0");
 
+  /* -------- NEW: control visibility -------- */
+  document.getElementById("milkGroup").style.display =
+    card.dataset.usemilk == "1" ? "block" : "none";
+
+  document.getElementById("variantGroup").style.display =
+    card.dataset.usevariant == "1" ? "block" : "none";
+
+  document.getElementById("cupGroup").style.display =
+    card.dataset.usecup == "1" ? "block" : "none";
+
+  document.getElementById("extraShotBox").style.display =
+    card.dataset.useextrashot == "1" ? "flex" : "none";
+  /* ----------------------------------------- */
+
+  /* VARIANTS */
+  variantSelect.innerHTML = "";
+  variants = [];
+  try { variants = JSON.parse(card.dataset.variants || "[]"); } catch {}
+  if(!Array.isArray(variants) || variants.length === 0){ variants = ["Hot","Iced"]; }
+
+  variants.forEach(v=>{
+    let o = document.createElement("option");
+    o.value = v; o.textContent = v;
+    variantSelect.appendChild(o);
+  });
+
+  /* MILK CHOICES */
+  milkSelect.innerHTML = "";
+  ["Full Fat","Low Fat","Lactose Free","Oat Milk"].forEach(m=>{
+    let o = document.createElement("option");
+    o.value = m;
+    o.textContent = (m === "Full Fat") ? m : `${m} (+${milkExtra.toFixed(3)} KWD)`;
+    milkSelect.appendChild(o);
+  });
+
+  /* DETAILS */
   modalDetails.innerHTML = "";
-  if(origin) modalDetails.innerHTML += `<span><strong>Origin:</strong> ${origin}</span>`;
-  if(process) modalDetails.innerHTML += `<span><strong>Process:</strong> ${process}</span>`;
-  if(flavors) modalDetails.innerHTML += `<span><strong>Flavors:</strong> ${flavors}</span>`;
+  if(card.dataset.origin) modalDetails.innerHTML += `<span><strong>Origin:</strong> ${card.dataset.origin}</span>`;
+  if(card.dataset.process) modalDetails.innerHTML += `<span><strong>Process:</strong> ${card.dataset.process}</span>`;
+  if(card.dataset.flavors) modalDetails.innerHTML += `<span><strong>Flavors:</strong> ${card.dataset.flavors}</span>`;
 
-  if(img.match(/\.(mp4|mov|webm|mkv)$/i)){
-    modalImg.style.display="none";
-    modalVideo.style.display="block";
-    modalVideo.src = img;
+  /* MEDIA */
+  let src = card.dataset.img;
+  if(src && src.match(/\.(mp4|mov|webm)$/i)){
+    modalVideo.src = src;
+    modalVideo.style.display = "block";
+    modalImg.style.display = "none";
     modalVideo.play();
   } else {
-    modalVideo.pause();
-    modalVideo.style.display="none";
-    modalImg.style.display="block";
-    modalImg.src = img;
+    modalImg.src = src;
+    modalImg.style.display = "block";
+    modalVideo.style.display = "none";
   }
+
+  extraShot.checked = false;
+  updateModalPrice();
 }
 
+function updateModalPrice(){
+  let price = basePrice;
+  let m = milkSelect.value;
+  if(m !== "Full Fat"){ price += milkExtra; }
+  if(extraShot.checked){ price += 0.200; }
+  modalPrice.textContent = price.toFixed(3) + " KWD";
+}
+
+milkSelect.onchange = updateModalPrice;
+variantSelect.onchange = updateModalPrice;
+extraShot.onchange = updateModalPrice;
+
+/* OPEN MODAL */
 function openModal(card){
+  if(card.dataset.stock === "sold_out"){
+    alert("This drink is sold out.");
+    return;
+  }
+
   currentCategory = card.dataset.categoryGroup;
   currentIndex = groupedCards[currentCategory].indexOf(card);
+
   loadCardData(card);
-  modal.style.display="flex";
+  modal.style.display = "flex";
 }
 
 document.querySelectorAll(".card").forEach(card=>{
   card.addEventListener("click",()=>openModal(card));
 });
 
-document.getElementById("closeModal").onclick=()=>modal.style.display="none";
-modal.onclick=e=>{ if(e.target===modal) modal.style.display="none"; };
+/* CLOSE MODAL */
+document.getElementById("closeModal").onclick = ()=>modal.style.display="none";
+modal.onclick = e=>{ if(e.target===modal){ modal.style.display="none"; } };
 
-// NEXT / PREV buttons
+/* NEXT / PREV */
 document.getElementById("modalNext").onclick = ()=>{
-  const list = groupedCards[currentCategory];
+  let list = groupedCards[currentCategory];
   currentIndex = (currentIndex + 1) % list.length;
   loadCardData(list[currentIndex]);
 };
-
 document.getElementById("modalPrev").onclick = ()=>{
-  const list = groupedCards[currentCategory];
+  let list = groupedCards[currentCategory];
   currentIndex = (currentIndex - 1 + list.length) % list.length;
   loadCardData(list[currentIndex]);
 };
 
-// SWIPE detection
-let startX = 0;
-modal.addEventListener("touchstart", e=>{
-  startX = e.changedTouches[0].screenX;
-});
-modal.addEventListener("touchend", e=>{
-  const endX = e.changedTouches[0].screenX;
-  if(endX - startX > 60) document.getElementById("modalPrev").click();
-  if(startX - endX > 60) document.getElementById("modalNext").click();
-});
+/* CART */
+function updateCartUI(){
+  let cart = JSON.parse(localStorage.getItem("collective_cart") || "[]");
+  document.getElementById("cartCountBubble").textContent = cart.length;
+  document.getElementById("cartCountBar").textContent = cart.length;
+}
+updateCartUI();
 
-// ARABIC
-document.getElementById("langBtn").addEventListener("click", async ()=>{
-  const btn=document.getElementById("langBtn");
-  const toArabic=btn.textContent.includes("عربي");
+/* ADD TO CART */
+document.getElementById("addToCartBtn").onclick = ()=>{
 
-  btn.textContent = toArabic ? "🌐 English" : "🌐 عربي";
-  document.documentElement.dir = toArabic ? "rtl" : "ltr";
+  let cart = JSON.parse(localStorage.getItem("collective_cart") || "[]");
 
-  const nodes=[];
-  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
-  const skip=["name-en","name-ar","price"];
+  let finalMilk = milkSelect.value;
+  let extra = (finalMilk === "Full Fat") ? 0 : milkExtra;
+  let finalPrice = parseFloat(modalPrice.textContent);
 
-  while(walker.nextNode()){
-    const n=walker.currentNode;
-    if(n.parentNode.classList &&
-       skip.some(s=>n.parentNode.classList.contains(s))) continue;
-
-    const txt=n.nodeValue.trim();
-    if(txt.length>1 && !['SCRIPT','STYLE'].includes(n.parentNode.tagName))
-      nodes.push(n);
-  }
-
-  const texts=nodes.map(n=>n.nodeValue.trim());
-
-  const res=await fetch('/translate_all',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({texts,target:toArabic?"ar":"en"})
+  cart.push({
+    name: modalTitle.textContent,
+    variant: variantSelect.value,
+    milk: finalMilk,
+    milkPrice: extra,
+    cup: cupSelect.value,
+    extraShot: extraShot.checked,
+    price: finalPrice.toFixed(3)
   });
 
-  const data=await res.json();
-  data.translations.forEach((t,i)=>nodes[i].nodeValue=t);
-});
+  localStorage.setItem("collective_cart", JSON.stringify(cart));
+  updateCartUI();
+  modal.style.display = "none";
+};
 
-// ADMIN
-document.getElementById("secret").onclick=()=>location.href="/auth";
+/* LOGIN */
+document.getElementById("secret").onclick = ()=>location.href="/auth";
+
 </script>
 
 </body>
